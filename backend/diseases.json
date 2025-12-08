@@ -1,0 +1,335 @@
+[
+  {
+    "name": "Heart Attack",
+    "symptoms": ["chest pain", "chest pressure", "shortness of breath", "sweating", "pain in left arm", "jaw pain", "nausea"],
+    "severity": "serious",
+    "description": "A blockage of blood flow to the heart muscle. Medical emergency.",
+    "specialty": "Cardiology",
+    "diet_plan": "Heart Healthy",
+    "precautions": ["Call emergency services immediately", "Chew aspirin", "Sit down and rest"]
+  },
+  {
+    "name": "Hypertension (High BP)",
+    "symptoms": ["severe headache", "fatigue", "vision problems", "chest pain", "difficulty breathing", "irregular heartbeat", "pounding in chest"],
+    "severity": "serious",
+    "description": "A condition in which the force of the blood against the artery walls is too high.",
+    "specialty": "Cardiology",
+    "diet_plan": "DASH Diet",
+    "precautions": ["Reduce salt intake", "Manage stress", "Take prescribed medication"]
+  },
+  {
+    "name": "Stroke",
+    "symptoms": ["sudden numbness", "confusion", "trouble speaking", "trouble seeing", "loss of balance", "severe headache", "face drooping"],
+    "severity": "serious",
+    "description": "Damage to the brain from interruption of its blood supply.",
+    "specialty": "Neurology",
+    "diet_plan": "Heart Healthy",
+    "precautions": ["Call emergency services", "Note the time symptoms started", "Do not give food or drink"]
+  },
+  {
+    "name": "Dengue Fever",
+    "symptoms": ["high fever", "severe headache", "pain behind eyes", "joint pain", "muscle pain", "skin rash", "vomiting"],
+    "severity": "serious",
+    "description": "Mosquito-borne viral infection causing severe flu-like illness.",
+    "specialty": "General Medicine",
+    "diet_plan": "Recovery Diet",
+    "precautions": ["Stay hydrated", "Use mosquito repellent", "Monitor platelet count"]
+  },
+  {
+    "name": "Malaria",
+    "symptoms": ["fever", "shaking chills", "headache", "muscle aches", "tiredness", "nausea", "vomiting", "diarrhea"],
+    "severity": "serious",
+    "description": "A disease caused by a plasmodium parasite, transmitted by the bite of infected mosquitoes.",
+    "specialty": "Infectious Disease",
+    "diet_plan": "High Calorie",
+    "precautions": ["Take antimalarial medication", "Use mosquito nets", "Seek medical attention"]
+  },
+  {
+    "name": "Typhoid",
+    "symptoms": ["prolonged fever", "weakness", "stomach pain", "headache", "diarrhea", "rash", "loss of appetite"],
+    "severity": "serious",
+    "description": "Bacterial infection that can lead to high fever, diarrhea, and vomiting.",
+    "specialty": "General Medicine",
+    "diet_plan": "Bland Diet",
+    "precautions": ["Drink boiled water", "Eat cooked food", "Complete antibiotic course"]
+  },
+  {
+    "name": "Type 2 Diabetes",
+    "symptoms": ["increased thirst", "frequent urination", "extreme hunger", "unexplained weight loss", "blurred vision", "slow healing sores"],
+    "severity": "mild",
+    "description": "Chronic condition that affects the way the body processes blood sugar (glucose).",
+    "specialty": "Endocrinology",
+    "diet_plan": "Diabetes-Friendly",
+    "precautions": ["Monitor blood sugar", "Limit sugar intake", "Exercise regularly"]
+  },
+  {
+    "name": "Hypoglycemia (Low Blood Sugar)",
+    "symptoms": ["shakiness", "dizziness", "sweating", "hunger", "fast heartbeat", "confusion", "irritability"],
+    "severity": "serious",
+    "description": "Condition caused by a very low level of blood sugar (glucose).",
+    "specialty": "Endocrinology",
+    "diet_plan": "Balanced Carb",
+    "precautions": ["Eat fast-acting sugar (candy/juice)", "Check blood sugar", "Eat regular meals"]
+  },
+  {
+    "name": "Hypothyroidism",
+    "symptoms": ["fatigue", "increased sensitivity to cold", "constipation", "dry skin", "weight gain", "puffy face", "muscle weakness"],
+    "severity": "mild",
+    "description": "Condition where the thyroid gland doesn't produce enough thyroid hormone.",
+    "specialty": "Endocrinology",
+    "diet_plan": "Thyroid Support",
+    "precautions": ["Take thyroid medication", "Monitor TSH levels", "Eat iodine-rich foods"]
+  },
+  {
+    "name": "Hyperthyroidism",
+    "symptoms": ["unexpected weight loss", "rapid heartbeat", "sweating", "irritability", "tremors", "anxiety", "sensitivity to heat"],
+    "severity": "mild",
+    "description": "Overproduction of a hormone by the butterfly-shaped gland in the neck (thyroid).",
+    "specialty": "Endocrinology",
+    "diet_plan": "Thyroid Support",
+    "precautions": ["Avoid iodine supplements", "Manage stress", "Consult endocrinologist"]
+  },
+  {
+    "name": "Migraine",
+    "symptoms": ["throbbing headache", "sensitivity to light", "sensitivity to sound", "nausea", "visual aura", "dizziness"],
+    "severity": "mild",
+    "description": "A headache of varying intensity, often accompanied by nausea and sensitivity to light and sound.",
+    "specialty": "Neurology",
+    "diet_plan": "Trigger-Free",
+    "precautions": ["Rest in a dark room", "Hydrate", "Avoid known triggers"]
+  },
+  {
+    "name": "Sinusitis",
+    "symptoms": ["facial pain", "stuffy nose", "runny nose", "loss of smell", "cough", "congestion", "headache"],
+    "severity": "mild",
+    "description": "Inflammation or swelling of the tissue lining the sinuses.",
+    "specialty": "ENT",
+    "diet_plan": "Anti-Inflammatory",
+    "precautions": ["Steam inhalation", "Stay hydrated", "Use saline nasal spray"]
+  },
+  {
+    "name": "Common Cold",
+    "symptoms": ["runny nose", "sore throat", "cough", "congestion", "slight body aches", "mild headache", "sneezing"],
+    "severity": "mild",
+    "description": "A common viral infection of the nose and throat.",
+    "specialty": "General Practice",
+    "diet_plan": "Immunity Booster",
+    "precautions": ["Wash hands frequently", "Drink fluids", "Rest"]
+  },
+  {
+    "name": "Viral Flu",
+    "symptoms": ["fever", "chills", "muscle aches", "cough", "congestion", "runny nose", "headache", "fatigue"],
+    "severity": "mild",
+    "description": "A common viral infection that can be deadly, especially in high-risk groups.",
+    "specialty": "General Practice",
+    "diet_plan": "Immunity Booster",
+    "precautions": ["Isolate to prevent spread", "Rest and hydrate", "Take antivirals if prescribed"]
+  },
+  {
+    "name": "Pneumonia",
+    "symptoms": ["chest pain when breathing", "confusion", "cough with phlegm", "fatigue", "fever", "sweating", "shortness of breath"],
+    "severity": "serious",
+    "description": "Infection that inflames air sacs in one or both lungs, which may fill with fluid.",
+    "specialty": "Pulmonology",
+    "diet_plan": "High Protein",
+    "precautions": ["Seek medical help", "Finish antibiotics", "Rest upright"]
+  },
+  {
+    "name": "Bronchitis",
+    "symptoms": ["cough", "production of mucus", "fatigue", "shortness of breath", "slight fever", "chest discomfort"],
+    "severity": "mild",
+    "description": "Inflammation of the lining of bronchial tubes, which carry air to and from the lungs.",
+    "specialty": "Pulmonology",
+    "diet_plan": "Anti-Inflammatory",
+    "precautions": ["Avoid smoke", "Use a humidifier", "Rest"]
+  },
+  {
+    "name": "Asthma",
+    "symptoms": ["shortness of breath", "chest tightness", "wheezing", "coughing attacks"],
+    "severity": "serious",
+    "description": "A condition in which a person's airways become inflamed, narrow and swell, and produce extra mucus.",
+    "specialty": "Pulmonology",
+    "diet_plan": "Anti-Inflammatory",
+    "precautions": ["Use inhaler", "Avoid triggers", "Monitor breathing"]
+  },
+  {
+    "name": "Tuberculosis",
+    "symptoms": ["coughing for 3 weeks", "coughing up blood", "chest pain", "weight loss", "fatigue", "fever", "night sweats"],
+    "severity": "serious",
+    "description": "A potentially serious infectious bacterial disease that mainly affects the lungs.",
+    "specialty": "Pulmonology",
+    "diet_plan": "High Calorie",
+    "precautions": ["Complete full course of medication", "Cover mouth when coughing", "Isolate if active"]
+  },
+  {
+    "name": "Gastroenteritis (Stomach Flu)",
+    "symptoms": ["watery diarrhea", "abdominal cramps", "nausea", "vomiting", "low-grade fever"],
+    "severity": "mild",
+    "description": "Intestinal infection marked by diarrhea, cramps, nausea, vomiting, and fever.",
+    "specialty": "Gastroenterology",
+    "diet_plan": "Brat Diet",
+    "precautions": ["Drink electrolytes", "Avoid dairy", "Eat small bland meals"]
+  },
+  {
+    "name": "GERD (Acid Reflux)",
+    "symptoms": ["burning sensation in chest", "chest pain", "difficulty swallowing", "regurgitation of food", "sensation of lump in throat"],
+    "severity": "mild",
+    "description": "Digestive disease in which stomach acid or bile irritates the food pipe lining.",
+    "specialty": "Gastroenterology",
+    "diet_plan": "Low Acid",
+    "precautions": ["Don't lie down after eating", "Avoid spicy foods", "Eat smaller meals"]
+  },
+  {
+    "name": "Peptic Ulcer",
+    "symptoms": ["burning stomach pain", "feeling of fullness", "bloating", "intolerance to fatty foods", "heartburn", "nausea"],
+    "severity": "mild",
+    "description": "A sore that develops on the lining of the esophagus, stomach, or small intestine.",
+    "specialty": "Gastroenterology",
+    "diet_plan": "Bland Diet",
+    "precautions": ["Avoid NSAIDs", "Avoid alcohol", "Manage stress"]
+  },
+  {
+    "name": "Jaundice",
+    "symptoms": ["yellow skin", "yellow eyes", "dark urine", "pale stool", "itchy skin", "fatigue", "abdominal pain"],
+    "severity": "serious",
+    "description": "Yellowing of the skin or whites of the eyes, arising from excess of the pigment bilirubin.",
+    "specialty": "Hepatology",
+    "diet_plan": "Liver Support",
+    "precautions": ["Avoid alcohol", "Stay hydrated", "Consult doctor immediately"]
+  },
+  {
+    "name": "Kidney Stones",
+    "symptoms": ["severe pain in side and back", "pain that radiates to lower abdomen", "pain on urination", "pink, red or brown urine", "nausea", "vomiting"],
+    "severity": "serious",
+    "description": "Small, hard deposits that form in the kidneys and is often painful when passed.",
+    "specialty": "Urology",
+    "diet_plan": "Kidney Friendly",
+    "precautions": ["Drink plenty of water", "Limit sodium", "Limit animal protein"]
+  },
+  {
+    "name": "Urinary Tract Infection (UTI)",
+    "symptoms": ["strong urge to urinate", "burning sensation when urinating", "passing frequent small amounts of urine", "cloudy urine", "pelvic pain"],
+    "severity": "mild",
+    "description": "An infection in any part of the urinary system, the kidneys, bladder, or urethra.",
+    "specialty": "Urology",
+    "diet_plan": "Hydration",
+    "precautions": ["Drink water", "Wipe front to back", "Empty bladder after intercourse"]
+  },
+  {
+    "name": "Arthritis",
+    "symptoms": ["pain", "stiffness", "swelling", "redness", "decreased range of motion"],
+    "severity": "mild",
+    "description": "Inflammation of one or more joints, causing pain and stiffness that can worsen with age.",
+    "specialty": "Orthopedics",
+    "diet_plan": "Anti-Inflammatory",
+    "precautions": ["Stay active", "Maintain healthy weight", "Protect joints"]
+  },
+  {
+    "name": "Osteoporosis",
+    "symptoms": ["back pain", "loss of height over time", "stooped posture", "bone that breaks much more easily than expected"],
+    "severity": "mild",
+    "description": "A condition in which bones become weak and brittle.",
+    "specialty": "Orthopedics",
+    "diet_plan": "Calcium Rich",
+    "precautions": ["Take calcium and vitamin D", "Weight-bearing exercise", "Prevent falls"]
+  },
+  {
+    "name": "Anemia",
+    "symptoms": ["fatigue", "weakness", "pale or yellowish skin", "irregular heartbeats", "shortness of breath", "dizziness", "chest pain"],
+    "severity": "mild",
+    "description": "A condition in which you lack enough healthy red blood cells to carry adequate oxygen to your body's tissues.",
+    "specialty": "Hematology",
+    "diet_plan": "Iron Rich",
+    "precautions": ["Eat iron-rich foods", "Take supplements if prescribed", "Avoid tea/coffee with meals"]
+  },
+  {
+    "name": "Allergy",
+    "symptoms": ["sneezing", "itching of the nose, eyes or roof of the mouth", "runny, stuffy nose", "watery, red or swollen eyes"],
+    "severity": "mild",
+    "description": "A condition in which the immune system reacts abnormally to a foreign substance.",
+    "specialty": "Allergist",
+    "diet_plan": "Anti-Inflammatory",
+    "precautions": ["Avoid triggers", "Carry antihistamines", "Keep windows closed during pollen season"]
+  },
+  {
+    "name": "Food Poisoning",
+    "symptoms": ["nausea", "vomiting", "watery diarrhea", "abdominal pain", "cramps", "fever"],
+    "severity": "mild",
+    "description": "Illness caused by food contaminated with bacteria, viruses, parasites, or toxins.",
+    "specialty": "General Practice",
+    "diet_plan": "Brat Diet",
+    "precautions": ["Rest stomach", "Hydrate", "Ease back into eating"]
+  },
+  {
+    "name": "Anxiety Disorder",
+    "symptoms": ["feeling nervous", "sense of impending danger", "increased heart rate", "breathing rapidly", "sweating", "trembling"],
+    "severity": "mild",
+    "description": "A mental health disorder characterized by feelings of worry, anxiety, or fear.",
+    "specialty": "Psychiatry",
+    "diet_plan": "Balanced Diet",
+    "precautions": ["Practice deep breathing", "Limit caffeine", "Seek therapy"]
+  },
+  {
+    "name": "Depression",
+    "symptoms": ["feelings of sadness", "angry outbursts", "loss of interest", "sleep disturbances", "lack of energy", "reduced appetite"],
+    "severity": "mild",
+    "description": "A mood disorder that causes a persistent feeling of sadness and loss of interest.",
+    "specialty": "Psychiatry",
+    "diet_plan": "Balanced Diet",
+    "precautions": ["Stay connected with friends", "Exercise", "Seek professional help"]
+  },
+  {
+    "name": "Insomnia",
+    "symptoms": ["difficulty falling asleep at night", "waking up during the night", "waking up too early", "not feeling well-rested", "daytime tiredness"],
+    "severity": "mild",
+    "description": "Persistent problems falling and staying asleep.",
+    "specialty": "General Practice",
+    "diet_plan": "Balanced Diet",
+    "precautions": ["Stick to a sleep schedule", "Avoid caffeine late in day", "Relax before bed"]
+  },
+  {
+    "name": "Psoriasis",
+    "symptoms": ["red patches of skin", "silvery scales", "dry cracked skin", "itching", "burning", "soreness"],
+    "severity": "mild",
+    "description": "A condition in which skin cells build up and form scales and itchy, dry patches.",
+    "specialty": "Dermatology",
+    "diet_plan": "Anti-Inflammatory",
+    "precautions": ["Moisturize", "Avoid triggers", "Get some sunlight"]
+  },
+  {
+    "name": "Eczema",
+    "symptoms": ["dry skin", "itching", "red to brownish-gray patches", "small raised bumps", "thickened skin"],
+    "severity": "mild",
+    "description": "A condition that makes your skin red and itchy.",
+    "specialty": "Dermatology",
+    "diet_plan": "Anti-Inflammatory",
+    "precautions": ["Moisturize frequently", "Use gentle soaps", "Avoid scratching"]
+  },
+  {
+    "name": "Acne",
+    "symptoms": ["whiteheads", "blackheads", "small red tender bumps", "pimples", "large solid painful lumps"],
+    "severity": "mild",
+    "description": "A skin condition that occurs when hair follicles plug with oil and dead skin cells.",
+    "specialty": "Dermatology",
+    "diet_plan": "Low Glycemic",
+    "precautions": ["Wash face twice daily", "Don't pop pimples", "Use non-comedogenic products"]
+  },
+  {
+    "name": "Conjunctivitis (Pink Eye)",
+    "symptoms": ["redness in one or both eyes", "itchiness", "gritty feeling", "discharge that forms a crust"],
+    "severity": "mild",
+    "description": "Inflammation or infection of the transparent membrane that lines your eyelid and eyeball.",
+    "specialty": "Ophthalmology",
+    "diet_plan": "Balanced Diet",
+    "precautions": ["Wash hands", "Don't touch eyes", "Use clean towels"]
+  },
+  {
+    "name": "Appendicitis",
+    "symptoms": ["sudden pain on right side of lower abdomen", "pain that worsens with coughing", "nausea", "vomiting", "loss of appetite"],
+    "severity": "serious",
+    "description": "A condition in which the appendix becomes inflamed and filled with pus.",
+    "specialty": "Surgery",
+    "diet_plan": "N/A (Surgery Required)",
+    "precautions": ["Seek immediate medical help", "Do not eat or drink", "Do not take laxatives"]
+  }
+]

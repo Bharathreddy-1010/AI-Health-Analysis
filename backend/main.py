@@ -1,0 +1,339 @@
+from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import Response
+from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+import io
+from datetime import datetime
+import json
+import os
+import pdfplumber
+import pytesseract
+from PIL import Image
+
+app = FastAPI()
+
+# --- CORS SETUP ---
+origins = ["http://localhost:3000"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class SymptomInput(BaseModel):
+    text: str
+
+# GLOBAL VARIABLES
+diseases_db = []
+
+# ==========================================
+# 1. LOAD DATABASE
+# ==========================================
+@app.on_event("startup")
+def load_db():
+    global diseases_db
+    try:
+        with open('diseases.json', 'r') as f:
+            diseases_db = json.load(f)
+        print(f"✅ Loaded {len(diseases_db)} diseases from diseases.json")
+    except FileNotFoundError:
+        print("❌ Error: diseases.json not found!")
+
+# ==========================================
+# 2. ANALYSIS ENGINE (Lab + Symptoms)
+# ==========================================
+
+# 🩸 LAB REPORT LOGIC (The New Brain)
+# Maps specific medical keywords found in reports to diseases
+LAB_REPORT_RULES = {
+    "dengue": ["ns1", "dengue positive", "platelet count low", "platelets < 100000", "igg positive", "igm positive"],
+    "malaria": ["plasmodium", "malaria detected", "parasite seen", "rings seen"],
+    "typhoid": ["salmonella", "typhi", "widal positive", "typhoid positive"],
+    "diabetes": ["glucose high", "sugar high", "hba1c > 6.5", "fasting > 126", "diabetes", "diabetic"],
+    "jaundice": ["bilirubin high", "bilirubin > 1.2", "jaundice"],
+    "anemia": ["hemoglobin low", "hb < 12", "anemic"],
+    "urinary tract infection": ["pus cells", "bacteria present", "nitrite positive", "uti"],
+    "heart attack": ["troponin positive", "ck-mb high", "ecg abnormal", "st elevation"],
+    "thyroid": ["tsh high", "tsh > 5", "tsh low", "t3", "t4"],
+    "pneumonia": ["consolidation", "infiltrates", "opacity", "pneumonia"]
+}
+
+def find_best_match(user_text):
+    user_text = user_text.lower()
+    print(f"🔍 Analyzing Text: {user_text[:200]}...") # Debug Print
+
+    best_disease = None
+    highest_score = 0
+    matched_symptoms = []
+    confidence = "0%"
+
+    # --- LEVEL 1: LAB REPORT CHECK (Highest Priority) ---
+    for disease_key, markers in LAB_REPORT_RULES.items():
+        for marker in markers:
+            if marker in user_text:
+                print(f"🚨 LAB ALERT: Found '{marker}' -> Mapping to {disease_key}")
+                
+                # Find the exact disease name in our DB (Fuzzy Match)
+                for d in diseases_db:
+                    if disease_key.lower() in d['name'].lower():
+                        return d, "100%", [f"Lab Result: {marker.upper()}"]
+    
+    # --- LEVEL 2: SYMPTOM MATCHING (Fallback) ---
+    for disease in diseases_db:
+        current_score = 0
+        current_matches = []
+        
+        for symptom in disease['symptoms']:
+            # Flexible Match: Check if words exist
+            # e.g. "chest pain" matches "pain in chest"
+            symptom_lower = symptom.lower()
+            if symptom_lower in user_text:
+                current_score += 3
+                current_matches.append(symptom)
+            else:
+                # Word-by-word check
+                words = symptom_lower.split()
+                if len(words) > 1 and all(w in user_text for w in words):
+                    current_score += 1
+                    current_matches.append(symptom)
+
+        if disease['name'].lower() in user_text:
+            current_score += 10
+
+        if current_score > highest_score:
+            highest_score = current_score
+            best_disease = disease
+            matched_symptoms = current_matches
+            
+    # Calculate Confidence
+    if highest_score > 0:
+        if highest_score <= 2: confidence = "75%"
+        elif highest_score <= 5: confidence = "90%"
+        else: confidence = "99%"
+        
+    return best_disease, confidence, matched_symptoms
+
+# ==========================================
+# 3. ENDPOINTS
+# ==========================================
+
+# --- TEXT EXTRACTION HELPER ---
+def extract_text_from_file(file: UploadFile):
+    text = ""
+    try:
+        if file.content_type == "application/pdf":
+            with pdfplumber.open(file.file) as pdf:
+                for page in pdf.pages:
+                    extract = page.extract_text()
+                    if extract: text += extract + " "
+                    
+        elif "image" in file.content_type:
+            # TESSERACT OCR logic
+            # Ensure Tesseract is installed on your machine!
+            image = Image.open(file.file)
+            text = pytesseract.image_to_string(image)
+            
+    except Exception as e:
+        print(f"❌ Error reading file: {e}")
+    return text
+
+@app.post("/analyze_file")
+async def analyze_file(file: UploadFile = File(...)):
+    # 1. Read File
+    extracted_text = extract_text_from_file(file)
+    
+    # 2. Handle Empty Read (OCR Fail)
+    if not extracted_text.strip():
+        return {
+            "condition": "File Read Failed",
+            "severity": "mild",
+            "confidence": "0%",
+            "description": "Could not read text. If using an image, make sure Tesseract OCR is installed. If PDF, ensure it's text-based.",
+            "diet_plan": "N/A"
+        }
+
+    # 3. Run Analysis
+    disease_data, conf, symptoms = find_best_match(extracted_text)
+    
+    if not disease_data:
+        return {
+            "condition": "Unknown Condition",
+            "severity": "mild",
+            "confidence": "0%",
+            "description": f"Analyzed report but found no specific diseases. Extracted Text Sample: '{extracted_text[:50]}...'",
+            "diet_plan": "Balanced Diet"
+        }
+
+    return {
+        "condition": disease_data['name'],
+        "severity": disease_data['severity'],
+        "confidence": conf,
+        "description": disease_data['description'],
+        "precautions": disease_data.get('precautions', []),
+        "specialty": disease_data['specialty'],
+        "diet_plan": disease_data['diet_plan']
+    }
+
+@app.post("/analyze")
+async def analyze_symptoms(input_data: SymptomInput):
+    disease_data, conf, symptoms = find_best_match(input_data.text)
+    
+    if not disease_data:
+        return {
+            "condition": "Unclear Symptoms",
+            "severity": "mild",
+            "confidence": "0%",
+            "description": "Try specific symptoms like 'fever', 'rash', 'vomiting'.",
+            "diet_plan": "Balanced Diet"
+        }
+
+    return {
+        "condition": disease_data['name'],
+        "severity": disease_data['severity'],
+        "confidence": conf,
+        "description": disease_data['description'],
+        "precautions": disease_data.get('precautions', []),
+        "specialty": disease_data['specialty'],
+        "diet_plan": disease_data['diet_plan']
+    }
+
+# --- PDF GENERATOR (Keep existing) ---
+@app.post("/generate_pdf")
+async def generate_pdf(data: dict):
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    # Header
+    c.setFillColor(colors.teal)
+    c.rect(0, height - 100, width, 100, fill=1, stroke=0)
+    c.setFillColor(colors.white)
+    c.setFont("Helvetica-Bold", 24)
+    c.drawString(50, height - 60, "NutriCare AI Health Report")
+    c.setFont("Helvetica", 12)
+    c.drawString(50, height - 80, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+
+    # Body
+    c.setFillColor(colors.black)
+    y = height - 150
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(50, y, f"Condition: {data.get('condition', 'Unknown')}")
+    y -= 30
+    
+    sev = data.get('severity', 'mild').upper()
+    c.setFillColor(colors.red if sev == "SERIOUS" else colors.green)
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, y, f"Severity: {sev}")
+    y -= 40
+
+    c.setFillColor(colors.black)
+    c.setFont("Helvetica", 12)
+    
+    def draw_line(title, text):
+        nonlocal y
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(50, y, title)
+        y -= 20
+        c.setFont("Helvetica", 11)
+        c.drawString(50, y, str(text)[:90]) 
+        y -= 30
+
+    draw_line("Description:", data.get('description', ''))
+    
+    precs = data.get('precautions', [])
+    if isinstance(precs, list): precs = ", ".join(precs)
+    draw_line("Precautions:", precs)
+    
+    draw_line("Specialist:", data.get('specialty', ''))
+    draw_line("Diet:", data.get('diet_plan', ''))
+
+    c.save()
+    buffer.seek(0)
+    return Response(content=buffer.getvalue(), media_type="application/pdf", headers={"Content-Disposition": "attachment; filename=report.pdf"})
+
+# ==========================================
+# 4. DIET PLAN PDF GENERATOR
+# ==========================================
+@app.post("/generate_diet_pdf")
+async def generate_diet_pdf(data: dict):
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+    
+    # --- TITLE PAGE ---
+    c.setFillColor(colors.teal)
+    c.rect(0, height - 120, width, 120, fill=1, stroke=0)
+    
+    c.setFillColor(colors.white)
+    c.setFont("Helvetica-Bold", 26)
+    c.drawString(50, height - 60, "7-Day Personalized Diet Plan")
+    
+    c.setFont("Helvetica", 16)
+    plan_title = data.get('title', 'Healthy Living')
+    c.drawString(50, height - 90, f"Plan Type: {plan_title}")
+    
+    y = height - 150
+    c.setFillColor(colors.black)
+    
+    # --- LOOP THROUGH DAYS ---
+    days_data = data.get('days', {})
+    
+    # We will print 2 days per page to fit nicely, or just list them continuously
+    for day, info in days_data.items():
+        # Check if we need a new page
+        if y < 100:
+            c.showPage()
+            y = height - 50
+            
+        # Day Header
+        c.setFillColor(colors.teal)
+        c.setFont("Helvetica-Bold", 16)
+        c.drawString(50, y, f"📅 {day}")
+        y -= 25
+        
+        # Meals
+        c.setFillColor(colors.black)
+        c.setFont("Helvetica", 11)
+        
+        meals = [
+            f"• Breakfast: {info.get('breakfast', '-')}",
+            f"• Lunch: {info.get('lunch', '-')}",
+            f"• Dinner: {info.get('dinner', '-')}",
+            f"• Snacks: {info.get('snacks', '-')}"
+        ]
+        
+        for meal in meals:
+            c.drawString(70, y, meal)
+            y -= 15
+            
+        y -= 5
+        # Grocery for this day
+        groceries = info.get('grocery', [])
+        g_text = "🛒 Grocery Needed: " + ", ".join(groceries)
+        c.setFillColor(colors.darkgrey)
+        c.setFont("Helvetica-Oblique", 10)
+        
+        # Simple text wrap for grocery list
+        if c.stringWidth(g_text) > 450:
+            # Split roughly if too long
+            c.drawString(70, y, g_text[:90] + "-")
+            y -= 12
+            c.drawString(85, y, g_text[90:])
+        else:
+            c.drawString(70, y, g_text)
+            
+        y -= 40 # Space between days
+
+    # Footer
+    c.setFont("Helvetica", 10)
+    c.setFillColor(colors.grey)
+    c.drawString(250, 30, "Generated by NutriCare AI")
+
+    c.save()
+    buffer.seek(0)
+    return Response(content=buffer.getvalue(), media_type="application/pdf", headers={"Content-Disposition": "attachment; filename=diet_plan.pdf"})

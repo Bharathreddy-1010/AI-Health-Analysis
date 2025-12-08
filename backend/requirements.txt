@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pydantic
+reportlab
+python-multipart
+pdfplumber
+pytesseract
+pillow
+pandas
+numpy
+scikit-learn
+joblib

@@ -78,7 +78,10 @@ const DiagnosisInput = () => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    let apiUrl = 'http://127.0.0.1:8000/analyze';
+    
+    // 👇 UPDATED: Point to your Render Backend
+    let apiUrl = 'https://ai-health-analysis.onrender.com/analyze';
+    
     let bodyData;
     let headers = { 'Content-Type': 'application/json' };
 
@@ -88,7 +91,9 @@ const DiagnosisInput = () => {
         setLoading(false);
         return;
       }
-      apiUrl = 'http://127.0.0.1:8000/analyze_file';
+      // 👇 UPDATED: Point to your Render Backend
+      apiUrl = 'https://ai-health-analysis.onrender.com/analyze_file';
+      
       const formData = new FormData();
       formData.append('file', selectedFile);
       bodyData = formData;
@@ -109,11 +114,12 @@ const DiagnosisInput = () => {
       localStorage.setItem('diagnosisResult', JSON.stringify(data));
       navigate('/results');
     } catch (error) {
-      alert("Failed to connect to AI Backend.");
+      // Updated error message
+      alert("Failed to connect to AI Backend. Is the Render server running?");
     } finally {
       setLoading(false);
     }
-  };
+};
 
   return (
     <div className="diagnosis-page">

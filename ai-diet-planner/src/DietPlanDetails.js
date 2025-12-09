@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-// --- FULL 7-DAY MOCK DATA ---
+// --- FULL 7-DAY MOCK DATA (Do not abbreviate!) ---
 const dietDatabase = {
   "diabetes-friendly": {
     title: "Diabetes-Friendly",
@@ -137,7 +137,7 @@ const dietDatabase = {
       },
       Thursday: {
         breakfast: "Whole grain toast with avocado",
-        lunch: "Chicken caesar salad",
+        lunch: "Chicken caesar salad (light dressing)",
         dinner: "Stir-fried tofu with veggies",
         snacks: "Carrots",
         grocery: ["Whole grain bread", "Avocado", "Chicken", "Tofu", "Carrots"]
@@ -228,16 +228,17 @@ const DietPlanDetails = () => {
   const navigate = useNavigate();
   const [selectedDay, setSelectedDay] = useState("Monday");
 
-  // Fallback
+  // Fallback Logic
   const planData = dietDatabase[type] || dietDatabase["diabetes-friendly"];
   const dailyPlan = planData.days[selectedDay] || planData.days["Monday"];
 
+  // --- 1. HANDLE PDF DOWNLOAD ---
   const handleDownloadPDF = async () => {
     try {
       const response = await fetch('https://ai-health-analysis.onrender.com/generate_diet_pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(planData), // Sends FULL 7-day data
+        body: JSON.stringify(planData),
       });
 
       if (response.ok) {
@@ -258,7 +259,10 @@ const DietPlanDetails = () => {
     }
   };
 
-  const handleGoToGrocery = () => navigate('/grocery');
+  // --- 2. HANDLE GROCERY NAVIGATION ---
+  const handleGoToGrocery = () => {
+    navigate('/grocery');
+  };
 
   return (
     <div className="plan-details-page">
@@ -281,14 +285,24 @@ const DietPlanDetails = () => {
       </div>
 
       <div className="plan-content-grid">
+        {/* MEALS COLUMN */}
         <div className="meals-section">
           <h2>{selectedDay}'s Meals</h2>
-          <div className="meal-card"><div className="meal-icon">☕</div><div><h3>Breakfast</h3><p>{dailyPlan.breakfast}</p></div></div>
-          <div className="meal-card"><div className="meal-icon">☀️</div><div><h3>Lunch</h3><p>{dailyPlan.lunch}</p></div></div>
-          <div className="meal-card"><div className="meal-icon">🌙</div><div><h3>Dinner</h3><p>{dailyPlan.dinner}</p></div></div>
-          <div className="meal-card"><div className="meal-icon">🍏</div><div><h3>Snacks</h3><p>{dailyPlan.snacks}</p></div></div>
+          <div className="meal-card">
+            <div className="meal-icon">☕</div><div><h3>Breakfast</h3><p>{dailyPlan.breakfast}</p></div>
+          </div>
+          <div className="meal-card">
+            <div className="meal-icon">☀️</div><div><h3>Lunch</h3><p>{dailyPlan.lunch}</p></div>
+          </div>
+          <div className="meal-card">
+            <div className="meal-icon">🌙</div><div><h3>Dinner</h3><p>{dailyPlan.dinner}</p></div>
+          </div>
+          <div className="meal-card">
+            <div className="meal-icon">🍏</div><div><h3>Snacks</h3><p>{dailyPlan.snacks}</p></div>
+          </div>
         </div>
 
+        {/* GROCERY COLUMN */}
         <div className="grocery-section">
           <div className="grocery-card">
             <h3>🛒 Grocery List</h3>
@@ -299,17 +313,29 @@ const DietPlanDetails = () => {
               ))}
             </div>
             <div style={{ marginTop: 'auto', paddingTop: '2rem' }}>
-              <button className="btn-view-all" onClick={handleGoToGrocery}>View All Products</button>
+              <button className="btn-view-all" onClick={handleGoToGrocery}>
+                View All Products
+              </button>
             </div>
           </div>
         </div>
       </div>
 
+      {/* FOOTER ACTIONS - CLEANED UP */}
       <div className="plan-footer-actions">
-        <button className="btn-outline" onClick={handleDownloadPDF} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <button 
+          className="btn-outline" 
+          onClick={handleDownloadPDF}
+          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
           ⬇ Download Full 7-Day Plan PDF
         </button>
-        <button className="btn-primary" onClick={handleGoToGrocery} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        
+        <button 
+          className="btn-primary" 
+          onClick={handleGoToGrocery}
+          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
           🛒 Shop Groceries
         </button>
       </div>

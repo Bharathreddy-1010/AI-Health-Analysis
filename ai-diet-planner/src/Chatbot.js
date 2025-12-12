@@ -31,7 +31,8 @@ const Chatbot = () => {
     try {
       // 2. Call Backend
       // NOTE: Use the Render URL here when deployed, e.g., 'https://your-render-url.onrender.com/chat'
-      const response = await fetch('http://127.0.0.1:8000/chat', {
+      //const response = await fetch('http://127.0.0.1:8000/chat', {
+      const response = await fetch('https://ai-health-analysis-1.onrender.com/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: messageToSend }),

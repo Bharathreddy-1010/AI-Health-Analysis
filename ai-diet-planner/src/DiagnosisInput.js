@@ -80,7 +80,7 @@ const DiagnosisInput = () => {
     setLoading(true);
     
     // 👇 UPDATED: Point to your Render Backend
-    let apiUrl = 'http://127.0.0.1:8000/analyze';
+    let apiUrl = 'https://ai-health-analysis-1.onrender.com/analyze';
     
     let bodyData;
     let headers = { 'Content-Type': 'application/json' };
@@ -92,7 +92,7 @@ const DiagnosisInput = () => {
         return;
       }
       // 👇 UPDATED: Point to your Render Backend
-      apiUrl = 'http://127.0.0.1:8000/analyze_file';
+      apiUrl = 'https://ai-health-analysis-1.onrender.com/analyze_file';
       
       const formData = new FormData();
       formData.append('file', selectedFile);

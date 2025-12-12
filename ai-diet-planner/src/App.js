@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // Removed unused 'useEffect'
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 
 // --- IMPORTS ---
@@ -9,41 +9,72 @@ import ResultsDashboard from './ResultsDashboard';
 import DietPlans from './DietPlans';           
 import DietPlanDetails from './DietPlanDetails'; 
 import CartPage from './CartPage';
+import Chatbot from './Chatbot'; 
+import { LoginPage, SignupPage } from './AuthPages'; 
 
 // --- NAVBAR COMPONENT ---
-const Navbar = ({ cartCount }) => {
+const Navbar = ({ cartCount, onLogout, user }) => {
   const location = useLocation();
   const showCartButton = location.pathname === '/grocery' || location.pathname === '/cart';
 
+  // Format ID to show cleanly
+  const displayId = user?.user_id ? user.user_id.toUpperCase() : "";
+
   return (
     <nav className="navbar">
-      <div className="nav-logo">NutriCare</div>
+      {/* LOGO + ID GROUP */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <div className="nav-logo">NutriCare</div>
+        
+        {/* User ID Badge */}
+        {user && (
+          <span style={{ 
+            fontSize: '0.85rem', 
+            color: '#a0aec0', 
+            borderLeft: '1px solid #4a5568', 
+            paddingLeft: '15px',
+            fontFamily: 'monospace',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px'
+          }}>
+            ID: <span style={{ color: '#63b3ed', fontWeight: 'bold' }}>{displayId}</span>
+          </span>
+        )}
+      </div>
+
       <div className="nav-links">
         <Link to="/">Home</Link>
         <Link to="/diagnosis">Analyze</Link>
-        <Link to="/diet-plans">Diet Plans</Link>
+        <Link to="/diet-plans">Diet</Link>
         <Link to="/hospitals">Hospitals</Link>
-        <Link to="/grocery">Grocery</Link>
+        <Link to="/grocery">Shop</Link>
       </div>
+
       <div className="nav-actions">
         {showCartButton && (
           <Link to="/cart" className="btn btn-secondary btn-sm" style={{ marginRight: '10px', display: 'flex', alignItems: 'center' }}>
-            🛒 Cart ({cartCount})
+            🛒 ({cartCount})
           </Link>
         )}
-        <Link to="/diagnosis" className="btn btn-primary btn-sm">Get Started</Link>
+        <button onClick={onLogout} className="btn btn-outline btn-sm">
+          Logout ↪
+        </button>
       </div>
     </nav>
   );
 };
 
 // --- HOME COMPONENT ---
-const Home = () => (
+const Home = ({ user }) => (
   <div className="home-container">
     <section className="hero-section">
       <div className="hero-content">
         <span className="hero-badge">AI-Powered Health & Nutrition Platform</span>
-        <h1>Your Personal <br/><span className="highlight">Diet & Health Assistant</span></h1>
+        
+        {/* Welcome Message */}
+        <h1>Welcome, <span className="highlight">{user?.email.split('@')[0]}</span></h1>
+        
         <p className="hero-subtitle">
           Transform your health journey with AI-powered disease prediction, personalized diet plans, and smart grocery recommendations.
         </p>
@@ -66,26 +97,39 @@ const Home = () => (
         <div className="feature-card"><div className="feature-icon">🛒</div><h3>Smart Grocery Shopping</h3><p>Filter and shop for groceries that match your dietary requirements.</p></div>
       </div>
     </section>
-
-    <section className="cta-banner">
-      <h2>Ready to Transform Your Health?</h2>
-      <p>Join thousands of users who have improved their health with personalized AI-powered diet plans.</p>
-      <Link to="/diagnosis" className="btn btn-white">Get Started for Free →</Link>
-    </section>
   </div>
 );
 
 // --- MAIN APP COMPONENT ---
 function App() {
+  // Auth State
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('nutricare_user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  
+  const [showSignup, setShowSignup] = useState(false);
   const [cart, setCart] = useState([]);
   const [notification, setNotification] = useState(null); 
 
-  // Helper for Toast Notification
   const showNotification = (message) => {
     setNotification(message);
     setTimeout(() => {
       setNotification(null);
     }, 3000);
+  };
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+    localStorage.setItem('nutricare_user', JSON.stringify(userData)); 
+    showNotification(`👋 Welcome back, ${userData.email}!`);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('nutricare_user'); 
+    setCart([]); 
+    showNotification("Logged out successfully.");
   };
 
   const addToCart = (product) => {
@@ -98,33 +142,50 @@ function App() {
     showNotification("🗑️ Item removed from cart");
   };
 
-  // --- NEW: HANDLE ORDER PLACEMENT ---
   const placeOrder = () => {
     if (cart.length === 0) {
       showNotification("⚠️ Your cart is empty!");
       return;
     }
-    // Simulate API call / Order processing
-    setCart([]); // Clear the cart
+    setCart([]); 
     showNotification("🎉 Order Placed Successfully! Shipment is on the way.");
   };
 
-  return (
-    <Router>
+  // GATEKEEPER (Login Check)
+  if (!user) {
+    return (
       <div className="App">
-        <Navbar cartCount={cart.length} />
-
-        {/* TOAST NOTIFICATION */}
         {notification && (
           <div className="toast-container">
-            <div className="toast-message">
-              {notification}
-            </div>
+            <div className="toast-message">{notification}</div>
           </div>
         )}
 
+        {showSignup ? (
+          <SignupPage onSwitch={() => setShowSignup(false)} />
+        ) : (
+          <LoginPage onLogin={handleLogin} onSwitch={() => setShowSignup(true)} />
+        )}
+      </div>
+    );
+  }
+
+  // MAIN APP ROUTER
+  return (
+    <Router>
+      <div className="App">
+        <Navbar cartCount={cart.length} onLogout={handleLogout} user={user} />
+
+        {notification && (
+          <div className="toast-container">
+            <div className="toast-message">{notification}</div>
+          </div>
+        )}
+
+        <Chatbot />
+
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home user={user} />} />
           <Route path="/diagnosis" element={<DiagnosisInput />} />
           <Route path="/results" element={<ResultsDashboard />} />
           <Route path="/hospitals" element={<HospitalFinder />} />
@@ -134,7 +195,6 @@ function App() {
             element={<GroceryShop addToCart={addToCart} />} 
           />
           
-          {/* UPDATED: Passing placeOrder function */}
           <Route 
             path="/cart" 
             element={

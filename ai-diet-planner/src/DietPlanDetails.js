@@ -235,7 +235,7 @@ const DietPlanDetails = () => {
   // --- 1. HANDLE PDF DOWNLOAD ---
   const handleDownloadPDF = async () => {
     try {
-      const response = await fetch('https://ai-health-analysis.onrender.com/generate_diet_pdf', {
+      const response = await fetch('http://127.0.0.1:8000/generate_diet_pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(planData),

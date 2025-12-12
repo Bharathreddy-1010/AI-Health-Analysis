@@ -12,7 +12,14 @@ import os
 import pdfplumber
 import pytesseract
 from PIL import Image
+import uuid 
+import certifi
+from groq import Groq
+from pymongo import MongoClient
+from pydantic import BaseModel
+from dotenv import load_dotenv
 
+load_dotenv()
 app = FastAPI()
 
 # --- CORS SETUP ---
@@ -120,6 +127,9 @@ def find_best_match(user_text):
 # ==========================================
 # 3. ENDPOINTS
 # ==========================================
+
+
+# Initialize FastAPI App
 
 # --- TEXT EXTRACTION HELPER ---
 def extract_text_from_file(file: UploadFile):
@@ -354,3 +364,139 @@ async def generate_diet_pdf(data: dict):
     c.save()
     buffer.seek(0)
     return Response(content=buffer.getvalue(), media_type="application/pdf", headers={"Content-Disposition": "attachment; filename=diet_plan.pdf"})
+
+
+# ==========================================
+# 3. DATABASE CONNECTION (MongoDB)
+# ==========================================
+MONGO_URI = os.getenv("MONGO_URI")
+
+try:
+    if not MONGO_URI:
+        print("⚠️ WARNING: MONGO_URI not found in .env file!")
+    else:
+        # Connect to MongoDB with SSL fix
+        client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
+        db = client["nutricare_db"]
+        users_collection = db["users"]
+        print("✅ Successfully connected to MongoDB Cloud!")
+except Exception as e:
+    print(f"⚠️ Database Connection Error: {e}")
+
+
+# ==========================================
+# 4. AI CHATBOT (Groq / Llama 3)
+# ==========================================
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+# Initialize Groq Client
+if not GROQ_API_KEY:
+    print("⚠️ WARNING: GROQ_API_KEY not found in .env file!")
+    groq_client = None
+else:
+    groq_client = Groq(api_key=GROQ_API_KEY)
+
+def get_ai_response(user_text):
+    if not groq_client:
+        return "System Error: AI Key missing."
+
+    try:
+        completion = groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile", 
+            messages=[
+                {
+                    "role": "system", 
+                    "content": "You are NutriCare AI. Answer in plain text only. Do not use markdown, bolding, or special characters."
+                },
+                {
+                    "role": "user", 
+                    "content": user_text
+                }
+            ],
+            temperature=0.7,
+            max_tokens=200,
+        )
+        
+        raw_reply = completion.choices[0].message.content
+        # Cleanup: Remove bolding symbols
+        return raw_reply.replace("**", "").replace("*", "")
+
+    except Exception as e:
+        print(f"⚠️ Groq Error: {e}")
+        return "I am currently offline. Please check your internet connection."
+
+# ==========================================
+# 5. API ENDPOINTS
+# ==========================================
+
+# --- A. Chat Endpoint ---
+class ChatRequest(BaseModel):
+    message: str
+
+from fastapi import Response
+
+@app.options("/chat")
+async def chat_options(response: Response):
+    # Manually tell the browser "It's okay to talk to me"
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return {}
+
+@app.post("/chat")
+async def chat_endpoint(request: ChatRequest):
+    print(f"📩 Received Message: {request.message}") 
+    bot_reply = get_ai_response(request.message)
+    print(f"🤖 AI Reply: {bot_reply}") 
+    return {"reply": bot_reply}
+
+
+# --- B. Authentication Endpoints ---
+class UserAuth(BaseModel):
+    email: str
+    password: str
+    custom_id: str
+
+@app.post("/signup")
+async def signup(user: UserAuth):
+    print(f"📝 Signup Attempt: {user.email}")
+    
+    # Check existing user
+    if users_collection.find_one({"email": user.email}):
+        return {"status": "error", "message": "Email already registered!"}
+    
+    clean_id = user.custom_id.strip().upper()
+    if users_collection.find_one({"id": clean_id}):
+        return {"status": "error", "message": f"ID '{clean_id}' is already taken."}
+    
+    # Create User
+    new_user = {
+        "id": clean_id,
+        "email": user.email,
+        "password": user.password 
+    }
+    users_collection.insert_one(new_user)
+    print(f"✅ User Created: {clean_id}")
+    
+    return {"status": "success", "message": "Account created successfully!"}
+
+@app.post("/login")
+async def login(user: UserAuth):
+    print(f"🔑 Login Attempt: {user.email}")
+    
+    found_user = users_collection.find_one({
+        "email": user.email, 
+        "password": user.password
+    })
+    
+    if found_user:
+        print(f"✅ Login Success: {found_user['id']}")
+        return {
+            "status": "success", 
+            "message": "Login successful", 
+            "user_id": found_user['id'],
+            "email": found_user['email']
+        }
+            
+    print("❌ Login Failed")
+    return {"status": "error", "message": "Invalid email or password"} 

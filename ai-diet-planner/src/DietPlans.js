@@ -8,28 +8,36 @@ const DietPlans = () => {
       slug: "diabetes-friendly",
       desc: "Low glycemic meals designed to help manage blood sugar levels and improve insulin sensitivity.",
       tags: ["Low sugar", "Complex carbs", "High fiber"],
-      icon: "❤️"
+      icon: "🩸", // Changed icon to distinguish from Heart Healthy
+      color: "#e6fffa",
+      borderColor: "#38b2ac"
     },
     {
       title: "Anti-Inflammatory",
       slug: "anti-inflammatory",
       desc: "Rich in omega-3s and antioxidants to reduce inflammation and support joint health.",
       tags: ["Omega-3 rich", "Antioxidants", "Turmeric"],
-      icon: "🌿"
+      icon: "🌿",
+      color: "#f0fff4",
+      borderColor: "#48bb78"
     },
     {
       title: "Heart Healthy",
       slug: "heart-healthy",
       desc: "Mediterranean-inspired meals to support cardiovascular health and reduce cholesterol.",
       tags: ["Low sodium", "Healthy fats", "Lean proteins"],
-      icon: "❤️"
+      icon: "❤️",
+      color: "#fff5f5",
+      borderColor: "#e53e3e"
     },
     {
       title: "Weight Management",
       slug: "weight-management",
       desc: "Balanced, portion-controlled meals to support healthy weight loss or maintenance.",
       tags: ["Calorie controlled", "High protein", "Filling"],
-      icon: "🔥"
+      icon: "⚖️",
+      color: "#ebf8ff",
+      borderColor: "#3182ce"
     }
   ];
 
@@ -37,27 +45,27 @@ const DietPlans = () => {
     <div className="diet-page">
       <div className="diet-header">
         <span className="hero-badge">✨ AI-Powered Nutrition</span>
-        <h1>Personalized Diet Plans</h1>
-        <p>Choose a diet type based on your health goals, or get a personalized plan by analyzing your symptoms first.</p>
+        <h1>Explore Diet Plans</h1>
+        <p>Choose a category below to view a comprehensive 7-day meal plan tailored for your health.</p>
       </div>
 
-      <div className="diet-cta-box">
-        <h2>Get a Personalized Plan</h2>
-        <p>Our AI can create a custom diet plan based on your specific health conditions.</p>
-        <Link to="/diagnosis">
-          <button className="btn btn-white-outline">Start Health Analysis →</button>
-        </Link>
-      </div>
+      {/* --- CTA BOX REMOVED HERE --- */}
 
       <div className="diet-grid">
         {plans.map((plan, index) => (
-          /* ADDED CLASS NAME HERE TO FIX OVERLAP */
           <Link 
             to={`/diet-plans/${plan.slug}`} 
             className="diet-card-link"
             key={index}
+            style={{ textDecoration: 'none' }} // Ensure no underline
           >
-            <div className="diet-card">
+            <div 
+              className="diet-card"
+              style={{ 
+                borderTop: `4px solid ${plan.borderColor}`,
+                background: plan.color 
+              }}
+            >
               <div className="diet-card-top">
                 <div className="diet-icon-box">{plan.icon}</div>
                 <h3>{plan.title}</h3>

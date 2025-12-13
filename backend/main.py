@@ -26,17 +26,13 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
-        "https://ai-health-analysis-847z.vercel.app",  # Old Vercel URL
-        "https://ai-health-analysis-1.onrender.com",   # Your own Render URL
-        "https://ai-health-analysis-847z-fql22kbhx-bharath-bs-projects-63053a7d.vercel.app", # <--- NEW VERCEL URL
-        "*"                                            # Final fallback
+        "https://ai-health-analysis-847z.vercel.app"
     ],
-    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 class SymptomInput(BaseModel):
     text: str
@@ -440,15 +436,6 @@ def get_ai_response(user_text):
 class ChatRequest(BaseModel):
     message: str
 
-from fastapi import Response
-
-@app.options("/chat")
-async def chat_options(response: Response):
-    # Manually tell the browser "It's okay to talk to me"
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "*"
-    return {}
 
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):

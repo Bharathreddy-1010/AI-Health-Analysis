@@ -26,10 +26,11 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",                        # For local testing
-        "https://ai-health-analysis-847z.vercel.app",  # Your Vercel frontend URL
+        "http://localhost:3000",
+        "https://ai-health-analysis-847z.vercel.app",  # Old Vercel URL
         "https://ai-health-analysis-1.onrender.com",   # Your own Render URL
-        "*"                                            # The fallback (keep it)
+        "https://ai-health-analysis-847z-fql22kbhx-bharath-bs-projects-63053a7d.vercel.app", # <--- NEW VERCEL URL
+        "*"                                            # Final fallback
     ],
     allow_origins=["*"],
     allow_credentials=True,

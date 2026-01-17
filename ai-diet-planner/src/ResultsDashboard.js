@@ -83,7 +83,7 @@ const ResultsDashboard = () => {
   // --- PDF DOWNLOAD ---
   const handleDownload = async () => {
     try {
-      const response = await fetch('https://ai-health-analysis-1.onrender.com/generate_pdf', {
+      const response = await fetch(`${apiBaseUrl}/generate_pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

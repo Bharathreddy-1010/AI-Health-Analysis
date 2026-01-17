@@ -436,6 +436,18 @@ def get_ai_response(user_text):
 class ChatRequest(BaseModel):
     message: str
 
+<<<<<<< HEAD
+=======
+from fastapi import Response
+
+@app.options("/chat")
+async def chat_options(response: Response):
+    # Manually tell the browser "It's okay to talk to me"
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return {}
+>>>>>>> 9555b90 (updated the paths)
 
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):

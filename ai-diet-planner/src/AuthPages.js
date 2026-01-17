@@ -75,7 +75,7 @@ export const LoginPage = ({ onLogin, onSwitch }) => {
 
     try {
       // Connecting to Python Backend
-      const response = await fetch('https://ai-health-analysis-1.onrender.com/login', {
+      const response = await fetch(`${apiBaseUrl}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -153,7 +153,7 @@ export const SignupPage = ({ onSwitch }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('https://ai-health-analysis-1.onrender.com/signup', {
+      const response = await fetch(`${apiBaseUrl}/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

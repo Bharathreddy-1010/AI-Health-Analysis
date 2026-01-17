@@ -1,5 +1,6 @@
  import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { apiBaseUrl } from './constants/apiconst.js'; 
 
 // --- FULL 7-DAY MOCK DATA (Do not abbreviate!) ---
 const dietDatabase = {

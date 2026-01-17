@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { apiBaseUrl } from './constants/apiconst.js'; 
 import './Chatbot.css'; // Make sure you create this file for styling
 
 const Chatbot = () => {

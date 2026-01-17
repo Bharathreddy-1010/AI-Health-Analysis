@@ -12,6 +12,8 @@ import CartPage from './CartPage';
 import Chatbot from './Chatbot'; 
 import { LoginPage, SignupPage } from './AuthPages'; 
 
+import { apiBaseUrl } from './constants/apiconst.js'; 
+
 // --- NAVBAR COMPONENT ---
 const Navbar = ({ cartCount, onLogout, user }) => {
   const location = useLocation();

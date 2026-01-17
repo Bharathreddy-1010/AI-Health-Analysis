@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiBaseUrl } from './constants/apiconst.js'; 
 
 const DiagnosisInput = () => {
   const [activeTab, setActiveTab] = useState('describe'); 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { apiBaseUrl } from './constants/apiconst.js'; 
 
 const ResultsDashboard = () => {
   // 1. Load the REAL AI Result from LocalStorage

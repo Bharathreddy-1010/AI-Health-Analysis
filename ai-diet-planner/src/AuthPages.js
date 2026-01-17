@@ -149,6 +149,7 @@ export const SignupPage = ({ onSwitch }) => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
+    console.log(apiBaseUrl + " handleSubmit");
     e.preventDefault();
     setError('');
     setLoading(true);

@@ -1,8 +1,9 @@
- import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiBaseUrl } from './constants/apiconst.js'; 
+import './DietPlanDetails.css'; // Import the new styles
 
-// --- FULL 7-DAY MOCK DATA (Do not abbreviate!) ---
+// --- FULL 7-DAY MOCK DATA ---
 const dietDatabase = {
   "diabetes-friendly": {
     title: "Diabetes-Friendly",
@@ -61,163 +62,37 @@ const dietDatabase = {
   "anti-inflammatory": {
     title: "Anti-Inflammatory",
     days: {
-      Monday: {
-        breakfast: "Turmeric oatmeal with flaxseeds",
-        lunch: "Spinach and kale salad with avocado",
-        dinner: "Baked mackerel with turmeric rice",
-        snacks: "Blueberries and walnuts",
-        grocery: ["Mackerel", "Kale", "Turmeric", "Blueberries", "Walnuts"]
-      },
-      Tuesday: {
-        breakfast: "Green smoothie with ginger",
-        lunch: "Quinoa bowl with roasted chickpeas",
-        dinner: "Salmon with steamed broccoli",
-        snacks: "Dark chocolate square",
-        grocery: ["Ginger", "Chickpeas", "Salmon", "Broccoli", "Dark Chocolate"]
-      },
-      Wednesday: {
-        breakfast: "Chia seed pudding with almond milk",
-        lunch: "Lentil and vegetable stew",
-        dinner: "Cod with sautéed greens",
-        snacks: "Orange slices",
-        grocery: ["Chia seeds", "Almond milk", "Lentils", "Cod", "Oranges"]
-      },
-      Thursday: {
-        breakfast: "Berry smoothie bowl",
-        lunch: "Avocado and tomato salad",
-        dinner: "Grilled chicken with turmeric",
-        snacks: "Green tea and almonds",
-        grocery: ["Berries", "Avocado", "Tomatoes", "Chicken", "Green tea"]
-      },
-      Friday: {
-        breakfast: "Oatmeal with berries",
-        lunch: "Grilled vegetable wrap",
-        dinner: "Baked trout with asparagus",
-        snacks: "Apple slices",
-        grocery: ["Oats", "Mixed veggies", "Trout", "Asparagus", "Apples"]
-      },
-      Saturday: {
-        breakfast: "Scrambled tofu with spinach",
-        lunch: "Quinoa salad with nuts",
-        dinner: "Roasted turkey with sweet potato",
-        snacks: "Pear",
-        grocery: ["Tofu", "Spinach", "Quinoa", "Turkey", "Sweet potato"]
-      },
-      Sunday: {
-        breakfast: "Greek yogurt with honey",
-        lunch: "Salmon salad",
-        dinner: "Stir-fried veggies with brown rice",
-        snacks: "Walnuts",
-        grocery: ["Yogurt", "Honey", "Salmon", "Veggies", "Brown rice"]
-      }
+      Monday: { breakfast: "Turmeric oatmeal with flaxseeds", lunch: "Spinach and kale salad with avocado", dinner: "Baked mackerel with turmeric rice", snacks: "Blueberries and walnuts", grocery: ["Mackerel", "Kale", "Turmeric", "Blueberries", "Walnuts"] },
+      Tuesday: { breakfast: "Green smoothie with ginger", lunch: "Quinoa bowl with roasted chickpeas", dinner: "Salmon with steamed broccoli", snacks: "Dark chocolate square", grocery: ["Ginger", "Chickpeas", "Salmon", "Broccoli", "Dark Chocolate"] },
+      Wednesday: { breakfast: "Chia seed pudding with almond milk", lunch: "Lentil and vegetable stew", dinner: "Cod with sautéed greens", snacks: "Orange slices", grocery: ["Chia seeds", "Almond milk", "Lentils", "Cod", "Oranges"] },
+      Thursday: { breakfast: "Berry smoothie bowl", lunch: "Avocado and tomato salad", dinner: "Grilled chicken with turmeric", snacks: "Green tea and almonds", grocery: ["Berries", "Avocado", "Tomatoes", "Chicken", "Green tea"] },
+      Friday: { breakfast: "Oatmeal with berries", lunch: "Grilled vegetable wrap", dinner: "Baked trout with asparagus", snacks: "Apple slices", grocery: ["Oats", "Mixed veggies", "Trout", "Asparagus", "Apples"] },
+      Saturday: { breakfast: "Scrambled tofu with spinach", lunch: "Quinoa salad with nuts", dinner: "Roasted turkey with sweet potato", snacks: "Pear", grocery: ["Tofu", "Spinach", "Quinoa", "Turkey", "Sweet potato"] },
+      Sunday: { breakfast: "Greek yogurt with honey", lunch: "Salmon salad", dinner: "Stir-fried veggies with brown rice", snacks: "Walnuts", grocery: ["Yogurt", "Honey", "Salmon", "Veggies", "Brown rice"] }
     }
   },
   "heart-healthy": {
     title: "Heart Healthy",
     days: {
-      Monday: {
-        breakfast: "Oatmeal with sliced almonds",
-        lunch: "Grilled salmon salad",
-        dinner: "Whole wheat pasta with marinara",
-        snacks: "Orange",
-        grocery: ["Oats", "Almonds", "Salmon", "Whole wheat pasta", "Oranges"]
-      },
-      Tuesday: {
-        breakfast: "Bran flakes with skim milk",
-        lunch: "Turkey sandwich on whole wheat",
-        dinner: "Baked chicken breast with green beans",
-        snacks: "Pear",
-        grocery: ["Bran flakes", "Skim milk", "Turkey", "Chicken breast", "Green beans"]
-      },
-      Wednesday: {
-        breakfast: "Yogurt with berries",
-        lunch: "Bean soup with side salad",
-        dinner: "Grilled fish with quinoa",
-        snacks: "Apple",
-        grocery: ["Yogurt", "Berries", "Beans", "Fish", "Quinoa"]
-      },
-      Thursday: {
-        breakfast: "Whole grain toast with avocado",
-        lunch: "Chicken caesar salad (light dressing)",
-        dinner: "Stir-fried tofu with veggies",
-        snacks: "Carrots",
-        grocery: ["Whole grain bread", "Avocado", "Chicken", "Tofu", "Carrots"]
-      },
-      Friday: {
-        breakfast: "Smoothie with spinach and fruit",
-        lunch: "Lentil salad",
-        dinner: "Roasted turkey with sweet potato",
-        snacks: "Banana",
-        grocery: ["Spinach", "Fruit", "Lentils", "Turkey", "Sweet potato"]
-      },
-      Saturday: {
-        breakfast: "Scrambled egg whites with peppers",
-        lunch: "Tuna salad",
-        dinner: "Whole wheat pizza with veggies",
-        snacks: "Grapes",
-        grocery: ["Egg whites", "Peppers", "Tuna", "Whole wheat dough", "Grapes"]
-      },
-      Sunday: {
-        breakfast: "Oatmeal with walnuts",
-        lunch: "Grilled veggie wrap",
-        dinner: "Baked salmon with asparagus",
-        snacks: "Almonds",
-        grocery: ["Oats", "Walnuts", "Veggies", "Salmon", "Asparagus"]
-      }
+      Monday: { breakfast: "Oatmeal with sliced almonds", lunch: "Grilled salmon salad", dinner: "Whole wheat pasta with marinara", snacks: "Orange", grocery: ["Oats", "Almonds", "Salmon", "Whole wheat pasta", "Oranges"] },
+      Tuesday: { breakfast: "Bran flakes with skim milk", lunch: "Turkey sandwich on whole wheat", dinner: "Baked chicken breast with green beans", snacks: "Pear", grocery: ["Bran flakes", "Skim milk", "Turkey", "Chicken breast", "Green beans"] },
+      Wednesday: { breakfast: "Yogurt with berries", lunch: "Bean soup with side salad", dinner: "Grilled fish with quinoa", snacks: "Apple", grocery: ["Yogurt", "Berries", "Beans", "Fish", "Quinoa"] },
+      Thursday: { breakfast: "Whole grain toast with avocado", lunch: "Chicken caesar salad (light dressing)", dinner: "Stir-fried tofu with veggies", snacks: "Carrots", grocery: ["Whole grain bread", "Avocado", "Chicken", "Tofu", "Carrots"] },
+      Friday: { breakfast: "Smoothie with spinach and fruit", lunch: "Lentil salad", dinner: "Roasted turkey with sweet potato", snacks: "Banana", grocery: ["Spinach", "Fruit", "Lentils", "Turkey", "Sweet potato"] },
+      Saturday: { breakfast: "Scrambled egg whites with peppers", lunch: "Tuna salad", dinner: "Whole wheat pizza with veggies", snacks: "Grapes", grocery: ["Egg whites", "Peppers", "Tuna", "Whole wheat dough", "Grapes"] },
+      Sunday: { breakfast: "Oatmeal with walnuts", lunch: "Grilled veggie wrap", dinner: "Baked salmon with asparagus", snacks: "Almonds", grocery: ["Oats", "Walnuts", "Veggies", "Salmon", "Asparagus"] }
     }
   },
   "weight-management": {
     title: "Weight Management",
     days: {
-      Monday: {
-        breakfast: "Egg white omelet with spinach",
-        lunch: "Grilled chicken breast with mixed greens",
-        dinner: "Baked cod with steamed broccoli",
-        snacks: "Celery sticks",
-        grocery: ["Egg whites", "Spinach", "Chicken breast", "Cod", "Broccoli"]
-      },
-      Tuesday: {
-        breakfast: "Greek yogurt with flaxseeds",
-        lunch: "Turkey lettuce wraps",
-        dinner: "Zucchini noodles with marinara",
-        snacks: "Apple slices",
-        grocery: ["Greek yogurt", "Flaxseeds", "Turkey", "Zucchini", "Apples"]
-      },
-      Wednesday: {
-        breakfast: "Smoothie with protein powder",
-        lunch: "Quinoa salad with cucumber",
-        dinner: "Grilled shrimp with asparagus",
-        snacks: "Almonds",
-        grocery: ["Protein powder", "Quinoa", "Cucumber", "Shrimp", "Asparagus"]
-      },
-      Thursday: {
-        breakfast: "Oatmeal with water and cinnamon",
-        lunch: "Lentil soup",
-        dinner: "Baked chicken with roasted carrots",
-        snacks: "Pear",
-        grocery: ["Oats", "Lentils", "Chicken", "Carrots", "Pear"]
-      },
-      Friday: {
-        breakfast: "Boiled eggs",
-        lunch: "Tuna salad with light mayo",
-        dinner: "Stir-fried tofu with mixed veggies",
-        snacks: "Berries",
-        grocery: ["Eggs", "Tuna", "Tofu", "Mixed veggies", "Berries"]
-      },
-      Saturday: {
-        breakfast: "Cottage cheese with pineapple",
-        lunch: "Grilled veggie salad",
-        dinner: "Turkey chili",
-        snacks: "Carrot sticks",
-        grocery: ["Cottage cheese", "Pineapple", "Veggies", "Turkey", "Carrots"]
-      },
-      Sunday: {
-        breakfast: "Scrambled egg whites",
-        lunch: "Chicken and veggie skewers",
-        dinner: "Baked salmon with green beans",
-        snacks: "Orange",
-        grocery: ["Egg whites", "Chicken", "Salmon", "Green beans", "Orange"]
-      }
+      Monday: { breakfast: "Egg white omelet with spinach", lunch: "Grilled chicken breast with mixed greens", dinner: "Baked cod with steamed broccoli", snacks: "Celery sticks", grocery: ["Egg whites", "Spinach", "Chicken breast", "Cod", "Broccoli"] },
+      Tuesday: { breakfast: "Greek yogurt with flaxseeds", lunch: "Turkey lettuce wraps", dinner: "Zucchini noodles with marinara", snacks: "Apple slices", grocery: ["Greek yogurt", "Flaxseeds", "Turkey", "Zucchini", "Apples"] },
+      Wednesday: { breakfast: "Smoothie with protein powder", lunch: "Quinoa salad with cucumber", dinner: "Grilled shrimp with asparagus", snacks: "Almonds", grocery: ["Protein powder", "Quinoa", "Cucumber", "Shrimp", "Asparagus"] },
+      Thursday: { breakfast: "Oatmeal with water and cinnamon", lunch: "Lentil soup", dinner: "Baked chicken with roasted carrots", snacks: "Pear", grocery: ["Oats", "Lentils", "Chicken", "Carrots", "Pear"] },
+      Friday: { breakfast: "Boiled eggs", lunch: "Tuna salad with light mayo", dinner: "Stir-fried tofu with mixed veggies", snacks: "Berries", grocery: ["Eggs", "Tuna", "Tofu", "Mixed veggies", "Berries"] },
+      Saturday: { breakfast: "Cottage cheese with pineapple", lunch: "Grilled veggie salad", dinner: "Turkey chili", snacks: "Carrot sticks", grocery: ["Cottage cheese", "Pineapple", "Veggies", "Turkey", "Carrots"] },
+      Sunday: { breakfast: "Scrambled egg whites", lunch: "Chicken and veggie skewers", dinner: "Baked salmon with green beans", snacks: "Orange", grocery: ["Egg whites", "Chicken", "Salmon", "Green beans", "Orange"] }
     }
   }
 };
@@ -229,11 +104,9 @@ const DietPlanDetails = () => {
   const navigate = useNavigate();
   const [selectedDay, setSelectedDay] = useState("Monday");
 
-  // Fallback Logic
   const planData = dietDatabase[type] || dietDatabase["diabetes-friendly"];
   const dailyPlan = planData.days[selectedDay] || planData.days["Monday"];
 
-  // --- 1. HANDLE PDF DOWNLOAD ---
   const handleDownloadPDF = async () => {
     try {
       const response = await fetch(`${apiBaseUrl}/generate_diet_pdf`, {
@@ -260,85 +133,100 @@ const DietPlanDetails = () => {
     }
   };
 
-  // --- 2. HANDLE GROCERY NAVIGATION ---
   const handleGoToGrocery = () => {
     navigate('/grocery');
   };
 
   return (
-    <div className="plan-details-page">
-      <div className="plan-header">
-        <span className="ai-badge">✨ AI-Generated Plan</span>
-        <h1>Your 7-Day Diet Plan</h1>
-        <div className="customized-tag">Customized for: {planData.title}</div>
-      </div>
-
-      <div className="days-scroller">
-        {daysOfWeek.map((day) => (
-          <button 
-            key={day} 
-            className={`day-pill ${selectedDay === day ? 'active' : ''}`}
-            onClick={() => setSelectedDay(day)}
-          >
-            {day}
-          </button>
-        ))}
-      </div>
-
-      <div className="plan-content-grid">
-        {/* MEALS COLUMN */}
-        <div className="meals-section">
-          <h2>{selectedDay}'s Meals</h2>
-          <div className="meal-card">
-            <div className="meal-icon">☕</div><div><h3>Breakfast</h3><p>{dailyPlan.breakfast}</p></div>
-          </div>
-          <div className="meal-card">
-            <div className="meal-icon">☀️</div><div><h3>Lunch</h3><p>{dailyPlan.lunch}</p></div>
-          </div>
-          <div className="meal-card">
-            <div className="meal-icon">🌙</div><div><h3>Dinner</h3><p>{dailyPlan.dinner}</p></div>
-          </div>
-          <div className="meal-card">
-            <div className="meal-icon">🍏</div><div><h3>Snacks</h3><p>{dailyPlan.snacks}</p></div>
-          </div>
-        </div>
-
-        {/* GROCERY COLUMN */}
-        <div className="grocery-section">
-          <div className="grocery-card">
-            <h3>🛒 Grocery List</h3>
-            <p style={{ color: '#718096', fontSize: '0.9rem', marginBottom: '1rem' }}>Items needed for {selectedDay}</p>
-            <div className="grocery-chips">
-              {dailyPlan.grocery.map((item, idx) => (
-                <span key={idx} className="grocery-chip">{item}</span>
-              ))}
-            </div>
-            <div style={{ marginTop: 'auto', paddingTop: '2rem' }}>
-              <button className="btn-view-all" onClick={handleGoToGrocery}>
-                View All Products
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* FOOTER ACTIONS - CLEANED UP */}
-      <div className="plan-footer-actions">
-        <button 
-          className="btn-outline" 
-          onClick={handleDownloadPDF}
-          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-        >
-          ⬇ Download Full 7-Day Plan PDF
-        </button>
+    <div className="page-container">
+      <div className="plan-content-wrapper">
         
-        <button 
-          className="btn-primary" 
-          onClick={handleGoToGrocery}
-          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-        >
-          🛒 Shop Groceries
-        </button>
+        {/* Header section matching the dark theme */}
+        <div className="plan-header">
+          <span className="hero-badge">✨ AI-Generated Plan</span>
+          <h1 className="page-title">{planData.title} Diet</h1>
+          <p className="page-subtitle">Your personalized 7-day nutrition strategy to achieve optimal health.</p>
+        </div>
+
+        {/* Day selection pills */}
+        <div className="days-scroller">
+          {daysOfWeek.map((day) => (
+            <button 
+              key={day} 
+              className={`day-pill ${selectedDay === day ? 'active' : ''}`}
+              onClick={() => setSelectedDay(day)}
+            >
+              {day}
+            </button>
+          ))}
+        </div>
+
+        {/* Main Grid: Meals (Left) & Groceries (Right) */}
+        <div className="plan-content-grid">
+          
+          <div className="meals-section">
+            <h2 className="section-title">{selectedDay}'s Menu</h2>
+            <div className="meal-card">
+              <div className="meal-icon bg-yellow">☕</div>
+              <div className="meal-info">
+                <h3>Breakfast</h3>
+                <p>{dailyPlan.breakfast}</p>
+              </div>
+            </div>
+            <div className="meal-card">
+              <div className="meal-icon bg-blue">☀️</div>
+              <div className="meal-info">
+                <h3>Lunch</h3>
+                <p>{dailyPlan.lunch}</p>
+              </div>
+            </div>
+            <div className="meal-card">
+              <div className="meal-icon bg-purple">🌙</div>
+              <div className="meal-info">
+                <h3>Dinner</h3>
+                <p>{dailyPlan.dinner}</p>
+              </div>
+            </div>
+            <div className="meal-card">
+              <div className="meal-icon bg-green">🍏</div>
+              <div className="meal-info">
+                <h3>Snacks</h3>
+                <p>{dailyPlan.snacks}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grocery-section">
+            <div className="grocery-card">
+              <div className="grocery-card-header">
+                <h3>🛒 Grocery List</h3>
+                <p>Items needed for {selectedDay}</p>
+              </div>
+              <div className="grocery-chips">
+                {dailyPlan.grocery.map((item, idx) => (
+                  <span key={idx} className="grocery-chip">{item}</span>
+                ))}
+              </div>
+              <div className="grocery-card-footer">
+                <button className="btn-secondary full-width" onClick={handleGoToGrocery}>
+                  View All Products →
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Footer Actions */}
+        <div className="plan-footer-actions">
+          <button className="btn-outline" onClick={handleDownloadPDF}>
+            <span className="icon">⬇️</span> Download Full 7-Day PDF
+          </button>
+          <button className="btn-primary" onClick={handleGoToGrocery}>
+            <span className="icon">🛒</span> Shop Groceries Now
+          </button>
+        </div>
+
       </div>
     </div>
   );

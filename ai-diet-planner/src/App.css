@@ -1,0 +1,777 @@
+/* --- BASE & VARIABLES --- */
+:root {
+  --primary: #0A84FF; /* Medical Blue */
+  --secondary: #00D4FF; /* Clinical Cyan */
+  --accent: #32D74B; /* Health Green */
+  --bg-dark: #070B19; /* Deep Space Navy */
+  --bg-light: #F2F5F9; /* Clean Hospital White */
+  --text-main: #1C1C1E;
+  --text-muted: #8E8E93;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --shadow-soft: 0 10px 40px rgba(10, 132, 255, 0.08);
+  --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.4);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-main);
+  overflow-x: hidden;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(10, 132, 255, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(10, 132, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(10, 132, 255, 0); }
+}
+
+@keyframes slideDown {
+  from { top: -50px; opacity: 0; }
+  to { top: 20px; opacity: 1; }
+}
+
+.fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.stagger-1 { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; opacity: 0; }
+.stagger-2 { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards; opacity: 0; }
+.float-animation { animation: float 4s ease-in-out infinite; }
+
+/* --- NAVBAR --- */
+.glass-effect {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 4rem;
+  transition: all 0.3s ease;
+}
+
+.nav-brand { display: flex; align-items: center; gap: 20px; }
+.nav-logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px;}
+.logo-icon { font-size: 1.8rem; }
+
+.user-badge {
+  background: rgba(10, 132, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--primary);
+  border: 1px solid rgba(10, 132, 255, 0.2);
+}
+.badge-label { color: var(--text-muted); margin-right: 4px; }
+.badge-value { font-weight: 700; font-family: monospace; letter-spacing: 1px; }
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin: 0 15px;
+  position: relative;
+  transition: color 0.3s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--primary); }
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0; height: 2px;
+  bottom: -4px; left: 0;
+  background-color: var(--primary);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+/* --- BUTTONS --- */
+.btn {
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.glass-btn {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  color: var(--primary);
+  border: 1px solid rgba(10, 132, 255, 0.2);
+}
+.glass-btn:hover { background: rgba(255, 255, 255, 0.9); transform: translateY(-2px); }
+
+.btn-logout { background: transparent; color: #FF3B30; border: 1px solid #FF3B30; }
+.btn-logout:hover { background: #FF3B30; color: white; }
+
+/* --- HERO SECTION --- */
+.hero-section {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  background: linear-gradient(180deg, #F2F5F9 0%, #FFFFFF 100%);
+}
+
+.hero-bg-elements {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+  opacity: 0.4;
+}
+.blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: var(--secondary); animation: float 10s infinite reverse; }
+.blob-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: var(--primary); animation: float 12s infinite; }
+
+.medical-cross {
+  position: absolute;
+  font-size: 4rem;
+  color: rgba(10, 132, 255, 0.05);
+  font-weight: 900;
+}
+.cross-1 { top: 20%; left: 15%; animation: float 6s infinite; }
+.cross-2 { bottom: 30%; right: 20%; animation: float 8s infinite reverse; }
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  padding: 0 20px;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(10, 132, 255, 0.1);
+  color: var(--primary);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  border: 1px solid rgba(10, 132, 255, 0.2);
+  animation: pulseGlow 2s infinite;
+}
+
+.hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  color: var(--bg-dark);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.hero-buttons { display: flex; gap: 20px; justify-content: center; }
+
+/* --- FEATURES SECTION --- */
+.features-section {
+  padding: 100px 4rem;
+  background: white;
+  position: relative;
+  z-index: 2;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.section-header h2 { font-size: 2.5rem; color: var(--bg-dark); margin-bottom: 10px; }
+.section-header p { color: var(--text-muted); font-size: 1.1rem; }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background: var(--bg-light);
+  padding: 40px 30px;
+  border-radius: 24px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(0,0,0,0.02);
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  background: white;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(10, 132, 255, 0.1);
+}
+
+.feature-icon-wrapper {
+  width: 80px; height: 80px;
+  margin: 0 auto 20px;
+  background: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.feature-icon { font-size: 2.5rem; }
+.feature-card h3 { color: var(--bg-dark); margin-bottom: 15px; font-size: 1.3rem; }
+.feature-card p { color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; }
+
+/* --- TOAST NOTIFICATIONS --- */
+.toast-container {
+  position: fixed;
+  top: 80px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-message {
+  padding: 12px 24px;
+  border-radius: 30px;
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(10, 132, 255, 0.2);
+}
+
+/* --- FOOTER --- */
+.footer {
+  margin-top: auto;
+  background: var(--bg-dark);
+  color: white;
+  padding: 60px 4rem 20px;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-col h3 { font-size: 1.5rem; margin-bottom: 15px; color: white; display: flex; align-items: center; gap: 8px;}
+.footer-col p { color: #8E8E93; line-height: 1.6; }
+.footer-col h4 { font-size: 1.1rem; margin-bottom: 20px; color: white; }
+.footer-col ul { list-style: none; padding: 0; margin: 0; }
+.footer-col ul li { margin-bottom: 12px; color: #8E8E93; cursor: pointer; transition: color 0.3s; }
+.footer-col ul li:hover { color: var(--secondary); }
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  color: #8E8E93;
+  font-size: 0.9rem;
+}
+
+
+/* =========================================
+   AGGRESSIVE DIAGNOSIS PAGE STYLES
+========================================= */
+
+/* --- 1. HIGH-IMPACT IMAGE BACKGROUND --- */
+.diagnosis-wrapper {
+  position: relative;
+  min-height: calc(100vh - 80px);
+  /* Striking Medical/Tech Background Image */
+background-image: url('/Users/bharathreddy/Desktop/analysis.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Deep Cyber-Blue Overlay to make the image blend and text pop */
+.diagnosis-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(7, 11, 25, 0.85) 0%, rgba(0, 212, 255, 0.3) 100%);
+  z-index: 0;
+}
+
+/* --- PAGE LAYOUT --- */
+.diagnosis-page {
+  position: relative;
+  z-index: 1; /* Keeps content above the dark overlay */
+  padding: 40px 20px 80px;
+  width: 100%;
+  max-width: 850px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  perspective: 2000px; /* Deep perspective for extreme 3D effect */
+}
+
+/* Force Header Text to be White against the dark image background */
+.diagnosis-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.diagnosis-header .hero-title, 
+.diagnosis-header .hero-subtitle {
+  color: #ffffff !important;
+  text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+}
+
+.diagnosis-header .text-gradient {
+  background: linear-gradient(135deg, #00D4FF, #ffffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --- 2. THE AGGRESSIVE 3D HOVER CARD --- */
+.diagnosis-glass-card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.9); /* Brighter glass for extreme contrast */
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4); 
+  transform-style: preserve-3d; 
+  /* Bouncier, snappier transition curve */
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+  will-change: transform;
+}
+
+/* ✨ MASSIVE 3D HOVER EFFECT ✨ */
+.diagnosis-glass-card.hover-3d:hover {
+  /* Extreme tilt, lift, and scale */
+  transform: rotateX(6deg) rotateY(-4deg) translateY(-20px) scale(1.04);
+  /* Casts a massive cyan neon glow and deep drop shadow */
+  box-shadow: 
+    -30px 30px 60px rgba(0, 0, 0, 0.5), 
+    0 0 80px rgba(0, 212, 255, 0.6); 
+  border-color: rgba(0, 212, 255, 0.9);
+}
+
+/* --- 3. THE DRAMATIC RESIZING TEXTAREA --- */
+.clinical-textarea.animated-resize {
+  width: 100%;
+  min-height: 100px; /* Starts very compact */
+  padding: 20px;
+  border-radius: 16px;
+  border: 2px solid rgba(10, 132, 255, 0.15);
+  background: #FAFCFF;
+  font-family: inherit;
+  font-size: 1.05rem;
+  color: var(--text-main);
+  resize: none; 
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy expansion */
+  box-sizing: border-box;
+}
+
+/* Violent pop-out when clicked */
+.clinical-textarea.animated-resize:focus {
+  outline: none;
+  min-height: 250px; /* Expands massively downward */
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 10px 30px rgba(10, 132, 255, 0.2), 0 0 0 4px rgba(10, 132, 255, 0.1);
+  transform: translateY(-5px); /* Pops up slightly inside the card */
+}
+
+/* --- TABS & UI ELEMENTS --- */
+.segmented-tabs { display: flex; background: rgba(0,0,0,0.05); padding: 8px; border-radius: 16px; margin-bottom: 30px; }
+.seg-tab { flex: 1; padding: 14px; border: none; background: transparent; border-radius: 12px; font-weight: 700; font-size: 1.05rem; color: var(--text-muted); cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.seg-tab.active { background: white; color: var(--primary); box-shadow: 0 4px 20px rgba(0,0,0,0.08); transform: scale(1.02); }
+.input-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
+.clinical-label { font-weight: 700; color: var(--bg-dark); font-size: 1.15rem; }
+.voice-btn { display: flex; align-items: center; gap: 6px; background: rgba(10, 132, 255, 0.1); color: var(--primary); border: none; padding: 10px 20px; border-radius: 20px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; }
+.voice-btn:hover { background: rgba(10, 132, 255, 0.2); transform: translateY(-2px); }
+.voice-btn.listening { background: #FF3B30; color: white; animation: pulseGlow 1s infinite; }
+.quick-chips { margin-top: 25px; }
+.quick-chips p { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; }
+.chips-wrapper { display: flex; flex-wrap: wrap; gap: 12px; }
+.medical-chip { background: white; border: 1px solid rgba(0,0,0,0.1); padding: 10px 20px; border-radius: 20px; font-size: 0.95rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.medical-chip:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-4px) scale(1.05); box-shadow: 0 8px 20px rgba(10, 132, 255, 0.2); }
+.clinical-upload-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; border: 3px dashed rgba(10, 132, 255, 0.5); border-radius: 20px; background: rgba(10, 132, 255, 0.03); cursor: pointer; transition: all 0.3s ease; text-align: center; }
+.clinical-upload-box:hover { background: rgba(10, 132, 255, 0.1); border-color: var(--primary); transform: scale(1.02); }
+.upload-icon-wrapper { margin-bottom: 20px; transform: scale(1.2); }
+.clinical-upload-box h3 { color: var(--bg-dark); margin: 0 0 10px 0; font-size: 1.4rem; }
+.clinical-upload-box p { color: var(--text-muted); font-size: 1rem; margin: 0 0 25px 0; }
+.selected-file-badge { display: flex; align-items: center; justify-content: space-between; background: white; padding: 20px 25px; border-radius: 16px; margin-top: 25px; border: 2px solid var(--accent); box-shadow: 0 10px 25px rgba(50, 215, 75, 0.2); }
+.file-detail { display: flex; align-items: center; gap: 20px; }
+.file-icon { font-size: 2rem; }
+.file-name { font-weight: 700; color: var(--bg-dark); font-size: 1.1rem; }
+.file-size { font-size: 0.95rem; color: var(--text-muted); }
+.remove-file-btn { background: rgba(255, 59, 48, 0.1); color: #FF3B30; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.remove-file-btn:hover { background: #FF3B30; color: white; transform: rotate(90deg); }
+.analyze-action-wrapper { margin-top: 50px; display: flex; justify-content: center; }
+.analyze-submit-btn { font-size: 1.25rem; font-weight: 800; padding: 20px 50px; width: 100%; max-width: 450px; text-transform: uppercase; letter-spacing: 1px; }
+
+
+/* =========================================
+   RESPONSIVE MEDIA QUERIES (Combined)
+========================================= */
+@media (max-width: 768px) {
+  /* Navbar & Home Adjustments */
+  .navbar { flex-direction: column; padding: 1rem; gap: 15px; }
+  .nav-links { flex-wrap: wrap; justify-content: center; }
+  .hero-title { font-size: 2.5rem; }
+  .features-section { padding: 60px 20px; }
+  .footer-content { grid-template-columns: 1fr; text-align: center; }
+  .footer-col h3 { justify-content: center; }
+
+  /* Diagnosis Page Adjustments */
+  .diagnosis-glass-card.hover-3d:hover { transform: none; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4); } /* Disable 3D tilt on mobile */
+  .diagnosis-wrapper { background-attachment: scroll; } /* Fix background scroll jumping on iOS */
+  .clinical-upload-box { padding: 40px 10px; }
+}
+
+/* =========================================
+   RESULTS DASHBOARD SPECIFIC STYLES
+========================================= */
+
+/* Demo Control Panel */
+.demo-control-panel {
+  background: rgba(7, 11, 25, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Result Header Typography */
+.result-header-block {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.condition-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 15px 0;
+  color: var(--bg-dark);
+  text-transform: capitalize;
+  letter-spacing: -1px;
+}
+
+.confidence-score {
+  font-family: monospace;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.score-highlight {
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 1.3rem;
+  background: rgba(10, 132, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-left: 10px;
+}
+
+/* Badges */
+.status-badge {
+  display: inline-block;
+  padding: 10px 25px;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.badge-safe { background: rgba(50, 215, 75, 0.15); color: #28a745; border: 1px solid rgba(50, 215, 75, 0.3); }
+.badge-danger { background: rgba(255, 59, 48, 0.15); color: #FF3B30; border: 1px solid rgba(255, 59, 48, 0.3); }
+
+/* Dynamic Content Boxes */
+.result-content-box {
+  padding: 40px;
+  border-radius: 20px;
+  transition: all 0.4s ease;
+}
+
+.box-safe {
+  background: linear-gradient(135deg, rgba(50, 215, 75, 0.05) 0%, rgba(255, 255, 255, 0.5) 100%);
+  border: 2px solid rgba(50, 215, 75, 0.2);
+}
+
+.box-safe h3 { color: #28a745; margin-top: 0; font-size: 1.5rem; }
+
+.box-danger {
+  background: linear-gradient(135deg, rgba(255, 59, 48, 0.05) 0%, rgba(255, 255, 255, 0.5) 100%);
+  border: 2px solid rgba(255, 59, 48, 0.3);
+}
+
+.box-danger h3 { color: #FF3B30; margin-top: 0; font-size: 1.5rem; }
+
+.result-description {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: var(--bg-dark);
+  margin-bottom: 30px;
+}
+
+/* Buttons inside Results */
+.action-buttons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #FF3B30, #ff6b6b);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 15px rgba(255, 59, 48, 0.3);
+}
+
+.btn-danger:hover {
+  box-shadow: 0 0 20px rgba(255, 59, 48, 0.5);
+  transform: translateY(-2px);
+}
+
+.rerun-analysis-link {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.rerun-analysis-link a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: color 0.3s;
+}
+
+.rerun-analysis-link a:hover {
+  color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .demo-control-panel { flex-direction: column; gap: 15px; text-align: center; }
+  .action-buttons-grid { grid-template-columns: 1fr; }
+  .condition-title { font-size: 2.2rem; }
+  .result-content-box { padding: 25px; }
+}
+
+/* =========================================
+   ✨ DECOUPLED RESULTS: FIXED CONTENT + MORPH BG ✨
+========================================= */
+
+/* --- 1. The Static Parent --- */
+.results-morphing-card {
+  position: relative;
+  max-width: 900px; 
+  width: 100%;
+  min-height: 650px; /* Increased to give the box more breathing room */
+  margin: 0 auto;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- 2. The EMPTY Visual Box --- */
+.visual-box-morph {
+  position: absolute;
+  z-index: -1; 
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%); 
+  overflow: hidden; 
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); /* Darker shadow */
+  background: rgba(7, 11, 25, 0.8); /* Dark base fallback */
+  will-change: transform;
+  animation: morphBoxSize 6s infinite alternate ease-in-out;
+}
+
+/* The Spinning Laser */
+.visual-box-morph::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%; width: 200%; height: 200%;
+  background: conic-gradient(transparent 0deg, transparent 270deg, #00D4FF 360deg);
+  z-index: -2;
+  animation: spinBorderLight 3s linear infinite;
+}
+
+/* The Solid Inner Glass (Now a dark, frosted cyber-navy for high contrast readability) */
+.visual-box-morph::after {
+  content: '';
+  position: absolute;
+  top: 4px; left: 4px; right: 4px; bottom: 4px; 
+  background: rgba(15, 23, 42, 0.90); /* ✨ Deep, dark opaque glass to block background noise ✨ */
+  backdrop-filter: blur(25px);
+  z-index: -1;
+  animation: morphInnerSize 6s infinite alternate ease-in-out;
+}
+
+/* --- 3. The Content Wrapper (Now fixed height/width) --- */
+.results-content-wrapper {
+  position: absolute; 
+  z-index: 10;
+  width: 650px; /* Slightly wider */
+  height: auto; /* ✨ Changed to auto so text doesn't bleed out of the box ✨ */
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%); 
+  padding: 20px 0; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  transition: opacity 0.4s ease;
+}
+
+/* --- 4. Dark Mode Typography for Results --- */
+.result-header-block { text-align: center; margin-bottom: 2rem; }
+
+.condition-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 15px 0;
+  color: #ffffff; /* ✨ Bright white text ✨ */
+  text-transform: capitalize;
+  letter-spacing: -1px;
+}
+
+.confidence-score {
+  font-family: monospace;
+  color: #94a3b8; /* Light gray */
+  font-size: 1.1rem;
+}
+
+.score-highlight {
+  color: #00D4FF; /* Cyan glow */
+  font-weight: bold;
+  font-size: 1.3rem;
+  background: rgba(0, 212, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-left: 10px;
+}
+
+/* Badges */
+.status-badge { display: inline-block; padding: 10px 25px; border-radius: 50px; font-weight: 800; font-size: 1.1rem; letter-spacing: 1px; text-transform: uppercase; }
+.badge-safe { background: rgba(50, 215, 75, 0.2); color: #4ade80; border: 1px solid rgba(50, 215, 75, 0.4); }
+.badge-danger { background: rgba(255, 59, 48, 0.2); color: #f87171; border: 1px solid rgba(255, 59, 48, 0.4); }
+
+/* Dynamic Content Boxes */
+.result-content-box { padding: 30px; border-radius: 20px; transition: all 0.4s ease; }
+.box-safe { background: rgba(50, 215, 75, 0.05); border: 1px solid rgba(50, 215, 75, 0.3); }
+.box-safe h3 { color: #4ade80; margin-top: 0; font-size: 1.4rem; }
+.box-danger { background: rgba(255, 59, 48, 0.05); border: 1px solid rgba(255, 59, 48, 0.3); }
+.box-danger h3 { color: #f87171; margin-top: 0; font-size: 1.4rem; }
+
+.result-description {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #e2e8f0; /* ✨ Light gray, highly readable text ✨ */
+  margin-bottom: 25px;
+}
+
+/* Buttons inside Results */
+.action-buttons-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.btn-danger { background: linear-gradient(135deg, #FF3B30, #ff6b6b); color: white; border: none; box-shadow: 0 4px 15px rgba(255, 59, 48, 0.3); }
+.btn-danger:hover { box-shadow: 0 0 20px rgba(255, 59, 48, 0.5); transform: translateY(-2px); }
+.rerun-analysis-link { margin-top: 30px; text-align: center; }
+.rerun-analysis-link a { color: #94a3b8; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: color 0.3s; }
+.rerun-analysis-link a:hover { color: #00D4FF; }
+
+
+/* --- The Animations --- */
+@keyframes spinBorderLight {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes morphBoxSize {
+  0% { 
+    /* Wide Rectangle - Made Taller */
+    width: 850px; 
+    height: 520px; 
+    border-radius: 20px; 
+  }
+  100% { 
+    /* Narrower, Taller Shape */
+    width: 700px; 
+    height: 620px; 
+    border-radius: 50px; 
+  }
+}
+
+@keyframes morphInnerSize {
+  0% { border-radius: 17px; }
+  100% { border-radius: 47px; }
+}
+
+@media (max-width: 768px) {
+  .visual-box-morph { animation: none; width: calc(100% - 20px); height: 100%; top: 0; left: 0; transform: none; min-height: 550px;}
+  .results-content-wrapper { position: relative; top: 0; left: 0; transform: none; width: 100%; height: auto; }
+  .action-buttons-grid { grid-template-columns: 1fr; }
+  .condition-title { font-size: 2.2rem; }
+}

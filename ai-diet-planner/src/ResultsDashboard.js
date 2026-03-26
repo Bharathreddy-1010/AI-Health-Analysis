@@ -18,14 +18,11 @@ const ResultsDashboard = () => {
     }
   });
 
-  // --- VOICE OUTPUT LOGIC (Improved) ---
+  // --- VOICE OUTPUT LOGIC ---
   const speakResult = () => {
     if (!('speechSynthesis' in window)) return;
-
-    // Stop any current speech
     window.speechSynthesis.cancel();
 
-    // Prepare text
     let message = `You may have ${result.condition}. `;
     if (result.severity === 'mild') {
       message += "This condition is generally mild. You can take precautions and follow our recommended diet plan.";
@@ -35,24 +32,16 @@ const ResultsDashboard = () => {
 
     const utterance = new SpeechSynthesisUtterance(message);
     
-    // --- FIX: SELECT A BETTER VOICE ---
-    // Wait for voices to load, then pick a "Natural" or "Google" voice
     const setVoice = () => {
       const voices = window.speechSynthesis.getVoices();
-      // Try to find a female/natural voice (Google US English is usually best on Chrome)
       const preferredVoice = voices.find(v => 
         v.name.includes("Google US English") || 
         v.name.includes("Samantha") || 
         v.name.includes("Female")
       );
-      
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
-      }
-      
-      // Tweak pitch/rate to sound less "ghostly"
+      if (preferredVoice) utterance.voice = preferredVoice;
       utterance.pitch = 1.1; 
-      utterance.rate = 0.9;  // Slightly slower is more natural
+      utterance.rate = 0.9; 
       window.speechSynthesis.speak(utterance);
     };
 
@@ -63,15 +52,10 @@ const ResultsDashboard = () => {
     }
   };
 
-  // --- AUTO-SPEAK ON LOAD ---
   useEffect(() => {
-    // Wait 1 second before speaking so the user sees the page first
-    const timer = setTimeout(() => {
-      speakResult();
-    }, 1000);
-    
-    return () => clearTimeout(timer); // Cleanup
-  }, []);
+    const timer = setTimeout(() => { speakResult(); }, 1000);
+    return () => clearTimeout(timer); 
+  }, [result.condition, result.severity]); 
 
   // --- TOGGLE DEMO ---
   const toggleSeverity = () => {
@@ -86,9 +70,7 @@ const ResultsDashboard = () => {
     try {
       const response = await fetch(`${apiBaseUrl}/generate_pdf`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(result),
       });
 
@@ -110,111 +92,103 @@ const ResultsDashboard = () => {
     }
   };
 
-  // Save changes
   useEffect(() => {
     localStorage.setItem('diagnosisResult', JSON.stringify(result));
   }, [result]);
 
+  const isMild = result.severity === 'mild';
+
   return (
-    <div className="diagnosis-page">
-      
-      {/* DEMO CONTROL */}
-      <div style={{ 
-        background: '#2d3748', color: 'white', padding: '15px', borderRadius: '10px', 
-        marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-      }}>
-        <span>🕵️‍♂️ <strong>Demo Control:</strong> Current Mode: {result.severity ? result.severity.toUpperCase() : "UNKNOWN"}</span>
-        <button 
-          onClick={toggleSeverity}
-          style={{ 
-            background: 'white', color: '#2d3748', border: 'none', padding: '8px 16px', 
-            borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' 
-          }}
-        >
-          Force {result.severity === 'mild' ? 'Serious' : 'Mild'} UI
-        </button>
-      </div>
-
-      <div className="diagnosis-header">
-        <h1>AI Analysis Results</h1>
-        <p>Based on the symptoms provided, here is the AI assessment.</p>
-      </div>
-
-      <div className="diagnosis-card" style={{ padding: '3rem' }}>
+    <div className="diagnosis-wrapper">
+      <div className="diagnosis-page fade-in-up">
         
-        {/* RESULT HEADER */}
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <div style={{ 
-            display: 'inline-block', padding: '8px 20px', borderRadius: '50px', 
-            background: result.severity === 'mild' ? '#e6fffa' : '#fff5f5',
-            color: result.severity === 'mild' ? '#319795' : '#e53e3e',
-            fontWeight: 'bold', marginBottom: '1rem'
-          }}>
-            {result.severity === 'mild' ? '✅ Low Risk' : '⚠️ High Attention Required'}
-          </div>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#2d3748' }}>
-            {result.condition}
-          </h2>
-          <p style={{ color: '#718096' }}>AI Confidence Score: <strong>{result.confidence}</strong></p>
+        {/* DEMO CONTROL */}
+        <div className="demo-control-panel stagger-1">
+          <span>
+            <span style={{color: '#00D4FF'}}>⚙️ System Override:</span> Current Mode: 
+            <strong style={{color: isMild ? '#32D74B' : '#FF3B30', marginLeft: '8px'}}>
+              {result.severity ? result.severity.toUpperCase() : "UNKNOWN"}
+            </strong>
+          </span>
+          <button onClick={toggleSeverity} className="btn glass-btn btn-sm">
+            Force {isMild ? 'Serious' : 'Mild'} UI
+          </button>
         </div>
 
-        {/* DYNAMIC CONTENT BLOCK */}
-        {result.severity === 'mild' ? (
-          // --- MILD CASE UI ---
-          <div style={{ background: '#f0fff4', padding: '2rem', borderRadius: '16px', border: '1px solid #c6f6d5' }}>
-            <h3 style={{ color: '#2f855a' }}>Recommended Action: Lifestyle Management</h3>
-            <p style={{ marginBottom: '2rem', color: '#2c7a7b' }}>
-              {result.description} Our AI suggests a personalized diet plan can significantly improve this condition without medication.
-            </p>
+        {/* HEADER */}
+        <div className="diagnosis-header stagger-1">
+          <div className="hero-badge pulse-glow" style={{ marginBottom: '15px' }}>Analysis Complete</div>
+          <h1 className="hero-title">Diagnostic <span className="text-gradient">Report</span></h1>
+          <p className="hero-subtitle">Based on your provided data, here is the AI assessment.</p>
+        </div>
+
+        {/* --- 1. THE STATIC PARENT CONTAINER --- */}
+        <div className="results-morphing-card stagger-1">
+          
+          {/* ✨ 2. THE EMPTY, MORPHING VISUAL BOX (Added this!) ✨ */}
+          <div className="visual-box-morph stagger-2"></div>
+          
+          {/* --- 3. THE FIXED, STATIC CONTENT LAYER --- */}
+          <div className="results-content-wrapper stagger-3">
             
-            <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-              <Link to="/diet-plans" style={{ flex: 1, textDecoration: 'none' }}>
-                <button className="btn btn-primary" style={{ width: '100%' }}>
-                  View Personal Diet Plan →
-                </button>
-              </Link>
-              <Link to="/grocery" style={{ flex: 1, textDecoration: 'none' }}>
-                <button className="btn btn-secondary" style={{ width: '100%' }}>
-                  Order Recommended Groceries
-                </button>
-              </Link>
-            </div>
-          </div>
-        ) : (
-          // --- SERIOUS CASE UI ---
-          <div style={{ background: '#fff5f5', padding: '2rem', borderRadius: '16px', border: '1px solid #fed7d7' }}>
-            <h3 style={{ color: '#c53030' }}>Recommended Action: Specialist Consultation</h3>
-            <p style={{ marginBottom: '2rem', color: '#9b2c2c' }}>
-              {result.description} Based on your location, we have identified top-rated specialists nearby.
-            </p>
-
-            <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-              <Link to="/hospitals" style={{ flex: 1, textDecoration: 'none' }}>
-                <button className="btn" style={{ 
-                  width: '100%', backgroundColor: '#e53e3e', color: 'white' 
-                }}>
-                  Find Nearby Hospitals 🏥
-                </button>
-              </Link>
+            {/* RESULT HEADER */}
+            <div className="result-header-block">
+              <div className={`status-badge ${isMild ? 'badge-safe' : 'badge-danger'} pulse-glow`}>
+                {isMild ? '✅ Low Risk Detected' : '⚠️ High Attention Required'}
+              </div>
               
-              <button 
-                className="btn btn-secondary" 
-                style={{ flex: 1, cursor: 'pointer' }}
-                onClick={handleDownload}
-              >
-                Download Medical Report PDF 📄
-              </button>
+              <h2 className="condition-title">{result.condition}</h2>
+              
+              <div className="confidence-score">
+                AI Confidence Matrix: <span className="score-highlight">{result.confidence}</span>
+              </div>
             </div>
-          </div>
-        )}
 
-        {/* --- RESTORED: RUN ANOTHER ANALYSIS BUTTON --- */}
-        <div style={{ marginTop: '30px', textAlign: 'center' }}>
-            <Link to="/diagnosis" style={{ color: '#718096', textDecoration: 'none', fontWeight: '600' }}>
-                ← Run Another Analysis
-            </Link>
-        </div>
+            {/* DYNAMIC CONTENT BLOCK */}
+            <div className={`result-content-box ${isMild ? 'box-safe' : 'box-danger'} fade-in`}>
+              <h3>
+                {isMild ? 'Recommended Action: Lifestyle Management' : 'Recommended Action: Specialist Consultation'}
+              </h3>
+              <p className="result-description">
+                {result.description} 
+                <br/><br/>
+                {isMild 
+                  ? "Our AI suggests a personalized therapeutic diet plan can significantly improve this condition." 
+                  : "Based on your location, we have identified top-rated specialists nearby to assist you immediately."}
+              </p>
+              
+              <div className="action-buttons-grid">
+                {isMild ? (
+                  <>
+                    <Link to="/diet-plans" style={{ textDecoration: 'none' }}>
+                      <button className="btn btn-primary btn-glow" style={{ width: '100%' }}>View Personal Diet Plan →</button>
+                    </Link>
+                    <Link to="/grocery" style={{ textDecoration: 'none' }}>
+                      <button className="btn glass-btn" style={{ width: '100%' }}>Order Recommended Groceries</button>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/hospitals" style={{ textDecoration: 'none' }}>
+                      <button className="btn btn-danger btn-glow" style={{ width: '100%' }}>Find Nearby Hospitals 🏥</button>
+                    </Link>
+                    <button className="btn glass-btn" style={{ width: '100%' }} onClick={handleDownload}>
+                      Download Medical PDF 📄
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
 
+            {/* RUN ANOTHER ANALYSIS */}
+            <div className="rerun-analysis-link">
+                <Link to="/diagnosis">
+                    ← Run Another Analysis
+                </Link>
+            </div>
+
+          </div> {/* End of results-content-wrapper */}
+        </div> {/* End of results-morphing-card */}
       </div>
     </div>
   );

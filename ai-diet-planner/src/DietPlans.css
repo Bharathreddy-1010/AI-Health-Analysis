@@ -1,0 +1,266 @@
+/* --- Global Page Wrapper (Light Sky Theme) --- */
+.diet-page-container {
+  position: relative;
+  min-height: 100vh;
+  /* Soft white to sky blue gradient */
+  background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
+  display: flex;
+  justify-content: center;
+  padding: 60px 20px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow: hidden; /* Keeps floating items contained */
+}
+
+/* --- THE AMBIENT 3D GROCERY BACKGROUND --- */
+.floating-background {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 0;
+  pointer-events: none; /* Allows user to click cards over the background */
+  overflow: hidden;
+}
+
+/* Glowing Orbs for ambiance */
+.bg-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.6;
+  animation: pulseGlow 8s infinite alternate ease-in-out;
+}
+.glow-blue { width: 400px; height: 400px; background: #bae6fd; top: -10%; left: -10%; }
+.glow-sky { width: 500px; height: 500px; background: #e0f2fe; bottom: 10%; right: -5%; animation-delay: -4s; }
+
+/* Floating Grocery Objects */
+.grocery-shape {
+  position: absolute;
+  opacity: 0.2; /* Kept subtle so it doesn't distract from reading */
+  bottom: -100px; 
+  animation: floatUp linear infinite;
+  z-index: 1;
+}
+
+/* Varying sizes, blurs (depth of field), and speeds create the 3D effect */
+.shape-1 { left: 15%; font-size: 5rem; filter: blur(3px); animation-duration: 25s; }
+.shape-2 { left: 35%; font-size: 3rem; filter: blur(1px); animation-duration: 18s; animation-delay: 5s; }
+.shape-3 { left: 55%; font-size: 7rem; filter: blur(8px); animation-duration: 35s; animation-delay: 2s; }
+.shape-4 { left: 75%; font-size: 2.5rem; filter: blur(2px); animation-duration: 20s; animation-delay: 10s; }
+.shape-5 { left: 88%; font-size: 4rem; filter: blur(4px); animation-duration: 28s; animation-delay: 7s; }
+.shape-6 { left: 5%;  font-size: 3.5rem; filter: blur(2px); animation-duration: 22s; animation-delay: 15s; }
+.shape-7 { left: 45%; font-size: 2rem; filter: blur(1px); animation-duration: 19s; animation-delay: 12s; }
+
+@keyframes floatUp {
+  0% { transform: translateY(100px) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.25; }
+  90% { opacity: 0.25; }
+  100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+/* --- FOREGROUND CONTENT --- */
+.diet-content-wrapper {
+  position: relative;
+  z-index: 10; /* Keeps content strictly above the floating items */
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* Header Section */
+.diet-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(14, 165, 233, 0.15);
+  color: #0284c7;
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  margin-bottom: 20px;
+}
+
+.page-title {
+  color: #0f172a;
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin: 0 0 15px 0;
+}
+
+.page-subtitle {
+  color: #475569;
+  font-size: 1.15rem;
+  max-width: 650px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* --- The Grid & Cards (OVERLAP FIX APPLIED) --- */
+.diet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-auto-rows: min-content; /* Forces grid to respect content height */
+  gap: 35px; /* Slightly increased gap */
+  margin-bottom: 60px;
+  align-items: stretch; 
+}
+
+.diet-card-link {
+  text-decoration: none;
+  display: block;
+  height: 100%; /* Ensures wrapper stretches to grid cell */
+}
+
+.diet-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 30px;
+  
+  height: 100%; /* Forces card to fill wrapper */
+  min-height: 100%; 
+  box-sizing: border-box; 
+  
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0,0,0,0.02);
+  border-top: 5px solid transparent;
+  position: relative;
+  z-index: 2;
+}
+
+.diet-card-link:hover .diet-card {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+}
+
+.diet-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.diet-icon-box {
+  font-size: 30px;
+  background: #f8fafc;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+}
+
+.arrow-icon {
+  color: #cbd5e1;
+  font-size: 24px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.diet-card-link:hover .arrow-icon {
+  transform: translateX(5px);
+  color: #0ea5e9;
+}
+
+.diet-card-title {
+  color: #0f172a;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+}
+
+.diet-card-desc {
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  flex-grow: 1;
+  margin: 0 0 25px 0;
+}
+
+/* --- Card Theme Accents --- */
+.theme-teal .diet-card { border-top-color: #0d9488; }
+.theme-teal .diet-icon-box { background: #ccfbf1; }
+
+.theme-green .diet-card { border-top-color: #16a34a; }
+.theme-green .diet-icon-box { background: #dcfce3; }
+
+.theme-red .diet-card { border-top-color: #dc2626; }
+.theme-red .diet-icon-box { background: #fee2e2; }
+
+.theme-blue .diet-card { border-top-color: #2563eb; }
+.theme-blue .diet-icon-box { background: #dbeafe; }
+
+/* --- Tags --- */
+.diet-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.diet-tag {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+}
+
+/* --- Footer Features --- */
+.diet-footer-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  padding: 35px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.feature-icon-simple {
+  font-size: 24px;
+  background: #f0f9ff;
+  color: #0ea5e9;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  border: 1px solid #e0f2fe;
+  flex-shrink: 0;
+}
+
+.feature-text h4 {
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.feature-text p {
+  color: #64748b;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}

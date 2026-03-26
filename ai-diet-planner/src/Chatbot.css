@@ -238,3 +238,160 @@
 .chat-input-area button:hover {
   background-color: var(--darker-color);
 }
+
+/* =========================================
+   DIAGNOSIS PAGE STYLES (Analyze)
+========================================= */
+
+/* --- 1. AI THEMED BACKGROUND --- */
+.diagnosis-wrapper {
+  position: relative;
+  min-height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
+.ai-background {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--bg-light) 0%, #E8F0FE 100%);
+  overflow: hidden;
+}
+
+/* Moving 3D Cyber Grid */
+.ai-grid {
+  position: absolute;
+  bottom: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background-image: 
+    linear-gradient(rgba(10, 132, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10, 132, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  transform: perspective(1000px) rotateX(75deg);
+  animation: gridScroll 15s linear infinite;
+  mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 60%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 60%);
+}
+
+@keyframes gridScroll {
+  0% { transform: perspective(1000px) rotateX(75deg) translateY(0); }
+  100% { transform: perspective(1000px) rotateX(75deg) translateY(50px); }
+}
+
+.ai-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.3;
+}
+.ai-glow.blob-1 { top: 10%; left: 10%; width: 400px; height: 400px; background: var(--secondary); animation: float 8s ease-in-out infinite alternate; }
+.ai-glow.blob-2 { bottom: 20%; right: 10%; width: 500px; height: 500px; background: var(--primary); animation: float 10s ease-in-out infinite alternate-reverse; }
+
+/* --- PAGE LAYOUT --- */
+.diagnosis-page {
+  position: relative;
+  z-index: 1; /* Keep above background */
+  padding: 40px 20px 80px;
+  max-width: 850px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  perspective: 1500px; /* REQUIRED FOR 3D EFFECT */
+}
+
+.diagnosis-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* --- 2. THE 3D HOVER CARD --- */
+.diagnosis-glass-card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  transform-style: preserve-3d; /* Allows 3D manipulation */
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease;
+  will-change: transform;
+}
+
+/* The 3D Hover Effect */
+.diagnosis-glass-card.hover-3d:hover {
+  /* Lifts up, scales slightly, and tilts dynamically */
+  transform: rotateX(2deg) rotateY(-2deg) translateY(-10px) scale(1.02);
+  box-shadow: 
+    -20px 20px 50px rgba(10, 132, 255, 0.15), 
+    15px -15px 40px rgba(0, 212, 255, 0.1);
+  border-color: rgba(0, 212, 255, 0.5);
+}
+
+/* --- 3. THE RESIZING TEXTAREA --- */
+.clinical-textarea.animated-resize {
+  width: 100%;
+  min-height: 120px; /* Starts compact */
+  padding: 20px;
+  border-radius: 16px;
+  border: 2px solid rgba(10, 132, 255, 0.15);
+  background: #FAFCFF;
+  font-family: inherit;
+  font-size: 1.05rem;
+  color: var(--text-main);
+  resize: none; /* Disable manual drag resizing for a cleaner look */
+  
+  /* The magic easing curve that makes the expansion feel smooth and professional */
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+/* What happens when the user clicks into the box */
+.clinical-textarea.animated-resize:focus {
+  outline: none;
+  min-height: 220px; /* Smoothly expands downward */
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.1);
+}
+
+/* --- TABS & BUTTONS (Restored from previous step) --- */
+.segmented-tabs {
+  display: flex; background: rgba(0,0,0,0.04); padding: 6px; border-radius: 16px; margin-bottom: 30px;
+}
+.seg-tab {
+  flex: 1; padding: 14px; border: none; background: transparent; border-radius: 12px; font-weight: 600; font-size: 1rem; color: var(--text-muted); cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.seg-tab.active { background: white; color: var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.input-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
+.clinical-label { font-weight: 600; color: var(--bg-dark); font-size: 1.1rem; }
+.voice-btn { display: flex; align-items: center; gap: 6px; background: rgba(10, 132, 255, 0.1); color: var(--primary); border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+.voice-btn:hover { background: rgba(10, 132, 255, 0.2); }
+.voice-btn.listening { background: #FF3B30; color: white; animation: pulseGlow 1.5s infinite; }
+.quick-chips { margin-top: 20px; }
+.quick-chips p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px; }
+.chips-wrapper { display: flex; flex-wrap: wrap; gap: 10px; }
+.medical-chip { background: white; border: 1px solid rgba(0,0,0,0.1); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; color: var(--text-main); cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+.medical-chip:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+.clinical-upload-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 20px; border: 2px dashed rgba(10, 132, 255, 0.4); border-radius: 16px; background: rgba(10, 132, 255, 0.02); cursor: pointer; transition: all 0.3s ease; text-align: center; }
+.clinical-upload-box:hover { background: rgba(10, 132, 255, 0.08); border-color: var(--primary); }
+.upload-icon-wrapper { margin-bottom: 15px; }
+.clinical-upload-box h3 { color: var(--bg-dark); margin: 0 0 8px 0; }
+.clinical-upload-box p { color: var(--text-muted); font-size: 0.9rem; margin: 0 0 20px 0; }
+.selected-file-badge { display: flex; align-items: center; justify-content: space-between; background: white; padding: 15px 20px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--accent); box-shadow: 0 5px 15px rgba(50, 215, 75, 0.1); }
+.file-detail { display: flex; align-items: center; gap: 15px; }
+.file-icon { font-size: 1.5rem; }
+.file-name { font-weight: 600; color: var(--bg-dark); }
+.file-size { font-size: 0.85rem; color: var(--text-muted); }
+.remove-file-btn { background: rgba(255, 59, 48, 0.1); color: #FF3B30; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.remove-file-btn:hover { background: #FF3B30; color: white; }
+.analyze-action-wrapper { margin-top: 40px; display: flex; justify-content: center; }
+.analyze-submit-btn { font-size: 1.15rem; padding: 16px 40px; width: 100%; max-width: 400px; }
+.loading-pulse { opacity: 0.8; animation: pulseGlow 1.5s infinite; cursor: not-allowed; }
+
+@media (max-width: 768px) {
+  .diagnosis-glass-card.hover-3d:hover { transform: none; } /* Disable 3D tilt on mobile for better usability */
+}
